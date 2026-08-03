@@ -1,0 +1,11 @@
+{
+  "name": "@metastruct/meta-core",
+  "version": "1.0.0",
+  "description": "Layer 0-5 meta-schema specification laws and validation engines.",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

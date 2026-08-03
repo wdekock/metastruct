@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "meta.user_data.json",
+  "title": "Layer 5 Runtime Execution Payload Meta-Schema",
+  "description": "Validates dynamic CRUD API payloads, user context wrappers, and mandatory audit trail data.",
+  "type": "object",
+  "required": [
+    "entityName",
+    "executionMode",
+    "userContext",
+    "payload"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "entityName": {
+      "type": "string",
+      "pattern": "^[A-Z][a-zA-Z0-9]+$"
+    },
+    "executionMode": {
+      "type": "string",
+      "enum": ["CREATE", "READ", "UPDATE", "SOFT_DELETE"]
+    },
+    "userContext": {
+      "type": "object",
+      "required": ["userId", "role"],
+      "properties": {
+        "userId": { "type": "string", "format": "uuid" },
+        "role": { "type": "string" },
+        "tenantId": { "type": "string", "format": "uuid" }
+      },
+      "additionalProperties": false
+    },
+    "payload": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
