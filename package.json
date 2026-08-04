@@ -1,0 +1,13 @@
+{
+  "name": "metastruct-root",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter \"./packages/**\" run build",
+    "test": "pnpm --filter \"./packages/**\" run test",
+    "clean": "pnpm --filter \"./packages/**\" run clean"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
+  }
+}
