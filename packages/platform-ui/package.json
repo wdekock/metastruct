@@ -1,21 +1,25 @@
 {
   "name": "@metastruct/platform-ui",
   "version": "1.0.0",
-  "description": "React + Material UI runtime execution driver for Metastruct manifests.",
-  "license": "Apache-2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist"
   },
-  "publishConfig": {
-    "access": "public"
+  "dependencies": {
+    "@metastruct/meta-core": "workspace:*",
+    "@metastruct/compiler": "workspace:*"
   },
   "peerDependencies": {
-    "@mui/material": "^5.0.0",
-    "@emotion/react": "^11.0.0",
-    "@emotion/styled": "^11.0.0",
-    "react": "^18.0.0"
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "typescript": "^5.3.3"
   }
 }

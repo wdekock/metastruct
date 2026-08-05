@@ -1,17 +1,11 @@
 {
   "name": "@metastruct/compiler",
   "version": "1.0.0",
-  "description": "Deterministic Schema-Driven Master Compiler for Metastruct manifests.",
-  "license": "Apache-2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "vitest run",
     "clean": "rm -rf dist"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "dependencies": {
     "@metastruct/meta-core": "workspace:*"

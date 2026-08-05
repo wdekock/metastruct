@@ -4,13 +4,11 @@
   "description": "Layer 0-5 meta-schema specification laws and validation engines.",
   "license": "Apache-2.0",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "dependencies": {
     "ajv": "^8.12.0",

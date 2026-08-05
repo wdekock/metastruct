@@ -2,11 +2,14 @@
   "name": "metastruct-root",
   "private": true,
   "scripts": {
-    "build": "pnpm --filter \"./packages/**\" run build",
-    "test": "pnpm --filter \"./packages/**\" run test",
-    "clean": "pnpm --filter \"./packages/**\" run clean"
+    "build": "pnpm --recursive --parallel run build",
+    "test": "pnpm --recursive run test",
+    "clean": "pnpm --recursive run clean"
   },
   "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "typescript": "^5.3.3",
     "vitest": "^1.2.0"
   }

@@ -1,47 +1,121 @@
-import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Paper } from '@mui/material';
+import React, { useState } from "react";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Stack,
+  Chip,
+  Alert
+} from "@mui/material";
+import {
+  adaptToSystemManifest,
+  SystemManifest,
+  CompiledLayoutSection,
+  NormalizedField
+} from "@metastruct/compiler";
 
-interface DynamicFormProps {
+export interface DynamicWorkflowFormProps {
   manifest: any;
-  onSubmit: (formData: any) => void;
+  onSubmit?: (data: Record<string, any>, currentStep: string) => void;
 }
 
-export const DynamicWorkflowForm: React.FC<DynamicFormProps> = ({ manifest, onSubmit }) => {
-  const [formData, setFormData] = useState<Record<string, any>>({});
-  const properties = manifest?.entity?.properties || {};
+export const DynamicWorkflowForm: React.FC<DynamicWorkflowFormProps> = ({
+  manifest: rawManifest,
+  onSubmit
+}) => {
+  const manifest: SystemManifest = adaptToSystemManifest(rawManifest);
 
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  // Initialize form state with compiled default values
+  const [formData, setFormData] = useState<Record<string, any>>(() => {
+    const initial: Record<string, any> = {};
+    for (const [key, field] of Object.entries<NormalizedField>(manifest.schema)) {
+      initial[key] = field.defaultValue ?? "";
+    }
+    return initial;
+  });
+
+  // Track active workflow step
+  const [currentStep, setCurrentStep] = useState<string>(
+    manifest.workflowState.initialStep || "draft"
+  );
+
+  const allowedNextSteps: string[] = manifest.workflowState.allowedTransitions[currentStep] || [];
+
+  const handleInputChange = (key: string, value: any) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
+  const handleTransition = (nextStep: string) => {
+    setCurrentStep(nextStep);
+    if (onSubmit) {
+      onSubmit(formData, nextStep);
+    }
   };
 
   return (
-    <Paper elevation={2} sx={{ p: 4, maxWidth: 600, margin: '0 auto' }}>
-      <Typography variant="h5" gutterBottom>
-        {manifest?.entity?.title || 'Dynamic Entity Form'}
-      </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {Object.keys(properties).map((key) => {
-          const field = properties[key];
-          return (
-            <TextField
-              key={key}
-              label={field.title || key}
-              type={field.type === 'integer' || field.type === 'number' ? 'number' : 'text'}
-              required={manifest?.entity?.required?.includes(key)}
-              onChange={(e) => handleChange(key, e.target.value)}
-              fullWidth
+    <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
+      <Card elevation={2}>
+        <CardContent>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+            <Typography variant="h5" component="h2" fontWeight="bold">
+              {manifest.entityName}
+            </Typography>
+            <Chip
+              label={`Status: ${currentStep}`}
+              color="primary"
+              variant="outlined"
             />
-          );
-        })}
-        <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-          Submit Record
-        </Button>
-      </Box>
-    </Paper>
+          </Box>
+
+          {/* Render compiled layout sections */}
+          <Stack spacing={4}>
+            {manifest.layout.map((section: CompiledLayoutSection, idx: number) => (
+              <Box key={idx}>
+                <Typography variant="h6" gutterBottom color="text.secondary">
+                  {section.title}
+                </Typography>
+                <Stack spacing={2}>
+                  {section.fields.map((field: NormalizedField) => (
+                    <TextField
+                      key={field.key}
+                      label={field.label}
+                      required={field.required}
+                      value={formData[field.key] ?? ""}
+                      onChange={(e) => handleInputChange(field.key, e.target.value)}
+                      fullWidth
+                    />
+                  ))}
+                </Stack>
+              </Box>
+            ))}
+          </Stack>
+
+          {/* Interactive Workflow Transitions */}
+          <Box mt={4} pt={2} borderTop="1px solid #eee">
+            <Typography variant="subtitle2" color="text.secondary" mb={1.5}>
+              Workflow Actions
+            </Typography>
+            {allowedNextSteps.length === 0 ? (
+              <Alert severity="info">No further workflow transitions available from this state.</Alert>
+            ) : (
+              <Stack direction="row" spacing={2}>
+                {allowedNextSteps.map((nextStep: string) => (
+                  <Button
+                    key={nextStep}
+                    variant="contained"
+                    onClick={() => handleTransition(nextStep)}
+                  >
+                    Transition to {nextStep}
+                  </Button>
+                ))}
+              </Stack>
+            )}
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
