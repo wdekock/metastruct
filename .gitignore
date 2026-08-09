@@ -1,12 +1,19 @@
+# Dependencies & Package Managers
 node_modules/
 **/node_modules/
-.vite/
-**/.vite/
+
+# Build & Output Artifacts
 dist/
 **/dist/
+.vite/
+**/.vite/
 coverage/
 **/coverage/
-*.log
-.DS_Store
+
+# Environment & Local Secrets
 .env
 .env.*
+
+# Logs & System Files
+*.log
+.DS_Store
