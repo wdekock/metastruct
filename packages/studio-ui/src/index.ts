@@ -1,4 +1,4 @@
 export * from "./EntityTreeSidebar";
 export * from "./StudioStepperBar";
 export * from "./StudioLayoutShell";
-
+export * from "@metastruct/platform-ui";
