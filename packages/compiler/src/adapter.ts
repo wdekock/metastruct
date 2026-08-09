@@ -1,4 +1,4 @@
-import { SystemManifest, MasterCompiler } from "./master_compiler.js";
+import { SystemManifest, MasterCompiler } from "./master_compiler";
 
 export function adaptToSystemManifest(rawManifest: any): SystemManifest {
   // If already in new shape, return directly

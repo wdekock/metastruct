@@ -1,1 +1,2 @@
-export * from "./DynamicWorkflowForm.js";
+export * from "./WidgetRegistry";
+export * from "./DynamicWorkflowForm";

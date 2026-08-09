@@ -7,7 +7,9 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@metastruct/compiler": "workspace:*",
     "@metastruct/expression-engine": "workspace:*",
+    "@metastruct/meta-core": "workspace:*",
     "@metastruct/platform-ui": "workspace:*",
     "@mui/material": "^5.15.0",
     "@mui/icons-material": "^5.15.0",

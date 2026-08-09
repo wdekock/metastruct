@@ -1,0 +1,1 @@
+{"version":3,"file":"browser_compiler.d.ts","sourceRoot":"","sources":["browser_compiler.ts"],"names":[],"mappings":"AAAA,OAAO,EAAkB,cAAc,EAAE,MAAM,sBAAsB,CAAC;AAEtE,qBAAa,eAAe;IAC1B,OAAO,CAAC,cAAc,CAAiB;;IAMhC,eAAe,CAAC,UAAU,EAAE,GAAG,EAAE,MAAM,CAAC,EAAE,GAAG,EAAE,YAAY,CAAC,EAAE,GAAG,GAAG,cAAc;CAG1F"}

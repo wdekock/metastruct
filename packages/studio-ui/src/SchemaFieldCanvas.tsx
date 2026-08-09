@@ -1,8 +1,6 @@
-// packages/studio-ui/src/SchemaFieldCanvas.tsx
 import React, { useState } from "react";
 import {
   Box,
-  Paper,
   Typography,
   TextField,
   MenuItem,
@@ -45,7 +43,6 @@ export const SchemaFieldCanvas: React.FC<SchemaFieldCanvasProps> = ({ schema, on
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
 
-  // Form state for creating/editing a field
   const [fieldForm, setFieldForm] = useState<Partial<SchemaField>>({
     id: "",
     label: "",
@@ -71,7 +68,7 @@ export const SchemaFieldCanvas: React.FC<SchemaFieldCanvasProps> = ({ schema, on
   };
 
   const handleOpenEditDialog = (fieldId: string) => {
-    const field = schema.fields[fieldId];
+    const field = schema?.fields?.[fieldId];
     if (!field) return;
     setEditingFieldId(fieldId);
     setFieldForm({ ...field });
@@ -82,9 +79,8 @@ export const SchemaFieldCanvas: React.FC<SchemaFieldCanvasProps> = ({ schema, on
     if (!fieldForm.id || !fieldForm.label) return;
 
     const newFieldId = fieldForm.id.trim().replace(/\s+/g, "_").toLowerCase();
-    const updatedFields = { ...schema.fields };
+    const updatedFields = { ...(schema?.fields || {}) };
 
-    // If key changed during edit, clean up old key
     if (editingFieldId && editingFieldId !== newFieldId) {
       delete updatedFields[editingFieldId];
     }
@@ -99,8 +95,7 @@ export const SchemaFieldCanvas: React.FC<SchemaFieldCanvasProps> = ({ schema, on
       visibilityRule: fieldForm.visibilityRule || undefined,
     } as SchemaField;
 
-    // Ensure the new field is assigned to at least the primary step
-    const updatedSteps = [...(schema.steps || [])];
+    const updatedSteps = [...(schema?.steps || [])];
     if (updatedSteps.length > 0) {
       const stepIndex = updatedSteps.findIndex((s) => s.fields.includes(newFieldId));
       if (stepIndex === -1) {
@@ -121,13 +116,12 @@ export const SchemaFieldCanvas: React.FC<SchemaFieldCanvasProps> = ({ schema, on
   };
 
   const handleDeleteField = (fieldId: string) => {
-    const updatedFields = { ...schema.fields };
+    const updatedFields = { ...(schema?.fields || {}) };
     delete updatedFields[fieldId];
 
-    // Remove reference from steps
-    const updatedSteps = (schema.steps || []).map((step) => ({
+    const updatedSteps = (schema?.steps || []).map((step) => ({
       ...step,
-      fields: step.fields.filter((f) => f !== fieldId),
+      fields: step.fields.filter((f: string) => f !== fieldId),
     }));
 
     onSchemaChange({
@@ -136,6 +130,8 @@ export const SchemaFieldCanvas: React.FC<SchemaFieldCanvasProps> = ({ schema, on
       steps: updatedSteps,
     });
   };
+
+  const fieldEntries = Object.entries(schema?.fields || {}) as [string, SchemaField][];
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -161,7 +157,7 @@ export const SchemaFieldCanvas: React.FC<SchemaFieldCanvasProps> = ({ schema, on
 
       {/* Field Cards Grid */}
       <Grid container spacing={2}>
-        {Object.entries(schema.fields).map(([fieldId, field]) => (
+        {fieldEntries.map(([fieldId, field]) => (
           <Grid item xs={12} sm={6} md={4} key={fieldId}>
             <Card variant="outlined" sx={{ borderRadius: 2, height: "100%", display: "flex", flexDirection: "column" }}>
               <CardContent sx={{ flexGrow: 1 }}>
@@ -226,7 +222,7 @@ export const SchemaFieldCanvas: React.FC<SchemaFieldCanvasProps> = ({ schema, on
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{editingFieldId ? "Edit Schema Field" : "Create Schema Field"}</DialogTitle>
         <DialogContent dividers>
-          <Stack spacing=2.5 sx={{ mt: 0.5 }}>
+          <Stack spacing={2.5} sx={{ mt: 0.5 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -264,7 +260,7 @@ export const SchemaFieldCanvas: React.FC<SchemaFieldCanvasProps> = ({ schema, on
                     setFieldForm({
                       ...fieldForm,
                       component: e.target.value,
-                      type: comp ? (comp.type as any) : "string",
+                      type: comp ? (comp.type as SchemaField["type"]) : "string",
                     });
                   }}
                 >

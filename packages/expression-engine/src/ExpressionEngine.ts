@@ -1,56 +1,29 @@
-// packages/expression-engine/src/engine/ExpressionEngine.ts
-
 import jsonata from "jsonata";
-import { detectCyclicDependencies, FieldDependencyNode } from "../analyzer/cycleDetector";
-
-export interface SchemaFieldConfig {
-  id: string;
-  type?: "string" | "number" | "boolean" | "array" | "object";
-  label?: string;
-  component?: string;
-  required?: boolean;
-  calculationRule?: string;
-  visibilityRule?: string;
-  [key: string]: any;
-}
-
-export interface EntitySchema {
-  $schemaVersion?: string;
-  id: string;
-  title?: string;
-  fields: Record<string, SchemaFieldConfig> | SchemaFieldConfig[];
-  steps?: Array<{
-    id: string;
-    title: string;
-    fields: string[];
-    visibilityRule?: string;
-  }>;
-}
+import { detectCyclicDependencies, FieldDependencyNode } from "./analyzer/cycleDetector";
+import { EntitySchema, SchemaField } from "./types";
 
 export interface EvaluationResult {
   computedData: Record<string, any>;
+  values: Record<string, any>;
   visibleFields: string[];
   visibilityMap: Record<string, boolean>;
+  visibility: Record<string, boolean>;
   errors: Record<string, string>;
 }
 
 export interface CompiledField {
   id: string;
-  config: SchemaFieldConfig;
+  config: SchemaField;
   dependsOn: string[];
   compiledCalcRule?: jsonata.Expression;
   compiledVisibilityRule?: jsonata.Expression;
 }
 
-/**
- * Parses JSONata formula strings to extract variable references pointing to `$state.fieldName`
- */
 export function extractDependenciesFromExpression(expression?: string): string[] {
   if (!expression || typeof expression !== "string") {
     return [];
   }
 
-  // Regex matches patterns like $state.fieldName, $state.nested.field, or state.fieldName
   const matches = expression.matchAll(/\$?state\.([a-zA-Z0-9_]+)/g);
   const dependencies = new Set<string>();
 
@@ -73,30 +46,33 @@ export class ExpressionEngine {
       this.schema = schema;
       this.compileSchema(schema);
     } else {
-      this.schema = { id: "empty_schema", fields: {} };
+      this.schema = {
+        $schemaVersion: "1.0.0",
+        id: "empty_schema",
+        title: "Empty Schema",
+        fields: {},
+        steps: [],
+      };
     }
   }
 
-  /**
-   * Compiles and validates the target schema.
-   * Performs static analysis to detect cyclic dependencies across field formulas.
-   */
   public compileSchema(schema: EntitySchema): void {
     this.schema = schema;
     this.compiledFields.clear();
 
-    const normalizedFields: SchemaFieldConfig[] = Array.isArray(schema.fields)
+    const normalizedFields: SchemaField[] = Array.isArray(schema.fields)
       ? schema.fields
-      : Object.values(schema.fields);
+      : Object.values(schema.fields || {});
 
     const dependencyNodes: FieldDependencyNode[] = [];
 
-    // Step 1: Pre-process dependencies & compile JSONata ASTs
     for (const field of normalizedFields) {
-      const calcDeps = extractDependenciesFromExpression(field.calculationRule);
-      const visDeps = extractDependenciesFromExpression(field.visibilityRule);
+      const calcRuleStr = field.calculationRule;
+      const visRuleStr = field.visibilityRule;
 
-      // Merge dependencies from both rules
+      const calcDeps = extractDependenciesFromExpression(calcRuleStr);
+      const visDeps = extractDependenciesFromExpression(visRuleStr);
+
       const combinedDeps = Array.from(new Set([...calcDeps, ...visDeps]));
 
       dependencyNodes.push({
@@ -107,17 +83,17 @@ export class ExpressionEngine {
       let compiledCalcRule: jsonata.Expression | undefined;
       let compiledVisibilityRule: jsonata.Expression | undefined;
 
-      if (field.calculationRule) {
+      if (calcRuleStr) {
         try {
-          compiledCalcRule = jsonata(field.calculationRule);
+          compiledCalcRule = jsonata(calcRuleStr);
         } catch (err: any) {
           console.error(`[ExpressionEngine] Syntax error in calculationRule for field '${field.id}':`, err.message);
         }
       }
 
-      if (field.visibilityRule) {
+      if (visRuleStr) {
         try {
-          compiledVisibilityRule = jsonata(field.visibilityRule);
+          compiledVisibilityRule = jsonata(visRuleStr);
         } catch (err: any) {
           console.error(`[ExpressionEngine] Syntax error in visibilityRule for field '${field.id}':`, err.message);
         }
@@ -132,11 +108,10 @@ export class ExpressionEngine {
       });
     }
 
-    // Step 2: Validate graph integrity via Cycle Detector (DFS)
     const cycleCheck = detectCyclicDependencies(dependencyNodes);
     if (cycleCheck.hasCycle) {
       throw new Error(
-        `[ExpressionEngine] Circular dependency detected in schema '${schema.id}': ${cycleCheck.cyclePath.join(
+        `[ExpressionEngine] Circular dependency detected in schema '${schema.id || "unnamed"}': ${cycleCheck.cyclePath.join(
           " -> "
         )}`
       );
@@ -145,20 +120,26 @@ export class ExpressionEngine {
     this.isCompiled = true;
   }
 
-  /**
-   * Evaluates input form state against compiled JSONata calculation and visibility rules.
-   * Performs multi-pass re-evaluation to propagate calculated dependent values.
-   */
-  public async evaluate(inputData: Record<string, any> = {}): Promise<EvaluationResult> {
-    if (!this.isCompiled) {
-      this.compileSchema(this.schema);
+  public async evaluate(
+    param1: EntitySchema | Record<string, any> = {},
+    param2?: Record<string, any>
+  ): Promise<EvaluationResult> {
+    let inputData: Record<string, any> = {};
+
+    if (param2 !== undefined) {
+      this.compileSchema(param1 as EntitySchema);
+      inputData = param2;
+    } else {
+      inputData = param1 as Record<string, any>;
+      if (!this.isCompiled) {
+        this.compileSchema(this.schema);
+      }
     }
 
     const computedData: Record<string, any> = { ...inputData };
     const visibilityMap: Record<string, boolean> = {};
     const errors: Record<string, string> = {};
 
-    // Max 5 passes to ensure complex nested multi-level updates settle
     const MAX_EVAL_PASSES = 5;
     let hasChanged = true;
     let pass = 0;
@@ -173,12 +154,10 @@ export class ExpressionEngine {
           $state: computedData,
         };
 
-        // 1. Evaluate Calculation Rules
         if (compiled.compiledCalcRule) {
           try {
             const calculatedVal = await compiled.compiledCalcRule.evaluate(evalContext);
 
-            // Update state if value computed and changed
             if (calculatedVal !== undefined && computedData[fieldId] !== calculatedVal) {
               computedData[fieldId] = calculatedVal;
               hasChanged = true;
@@ -188,17 +167,16 @@ export class ExpressionEngine {
           }
         }
 
-        // 2. Evaluate Visibility Rules
         if (compiled.compiledVisibilityRule) {
           try {
             const isVisible = await compiled.compiledVisibilityRule.evaluate(evalContext);
             visibilityMap[fieldId] = Boolean(isVisible);
           } catch (err: any) {
-            visibilityMap[fieldId] = true; // Fallback to visible on error
+            visibilityMap[fieldId] = true;
             errors[fieldId] = `Visibility Error: ${err.message || err}`;
           }
         } else {
-          visibilityMap[fieldId] = true; // Default visible if no rule set
+          visibilityMap[fieldId] = true;
         }
       }
     }
@@ -207,8 +185,10 @@ export class ExpressionEngine {
 
     return {
       computedData,
+      values: computedData,
       visibleFields,
       visibilityMap,
+      visibility: visibilityMap,
       errors,
     };
   }

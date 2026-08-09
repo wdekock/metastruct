@@ -1,10 +1,9 @@
-// apps/web/src/App.tsx
 import React, { useState, useEffect } from "react";
 import { Box, Paper, Grid, Divider, Typography, Tab, Tabs } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import BuildIcon from "@mui/icons-material/Build";
 
-import { EntitySchema, ExpressionEngine, EvaluationEvent } from "@metastruct/expression-engine";
+import { EntitySchema, ExpressionEngine } from "@metastruct/expression-engine";
 import { PlatformFieldRenderer } from "@metastruct/platform-ui";
 import { StudioLayoutShell, SchemaFieldCanvas } from "@metastruct/studio-ui";
 
@@ -52,30 +51,41 @@ const INITIAL_SCHEMA: EntitySchema = {
 export const MetastructWorkbench: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"builder" | "preview">("builder");
   const [schema, setSchema] = useState<EntitySchema>(INITIAL_SCHEMA);
-  const [formData, setFormData] = useState<Record<string, any>>({ entityType: "PTY_LTD", investmentAmount: 500000 });
-  const [computedState, setComputedState] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<Record<string, unknown>>({
+    entityType: "PTY_LTD",
+    investmentAmount: 500000,
+  });
+  const [computedState, setComputedState] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [visibleFields, setVisibleFields] = useState<string[]>([]);
 
-  // Re-instantiate engine whenever Schema or Form Data changes
   useEffect(() => {
+    let isMounted = true;
     const engine = new ExpressionEngine(schema);
 
     engine.evaluate(formData).then((res) => {
-      setComputedState(res.computedData);
-      setErrors(res.errors);
-      setVisibleFields(res.visibleFields);
+      if (!isMounted) return;
+      setComputedState(res.computedData || {});
+      setErrors(res.errors || {});
+      setVisibleFields(res.visibleFields || []);
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, [schema, formData]);
 
-  const handleFieldChange = (fieldId: string, val: any) => {
+  const handleFieldChange = (fieldId: string, val: unknown) => {
     setFormData((prev) => ({ ...prev, [fieldId]: val }));
   };
 
   return (
     <StudioLayoutShell>
       <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
-        <Tabs value={activeTab} onChange={(_, val) => setActiveTab(val)}>
+        <Tabs
+          value={activeTab}
+          onChange={(_: React.SyntheticEvent, val: "builder" | "preview") => setActiveTab(val)}
+        >
           <Tab icon={<BuildIcon />} iconPosition="start" label="Studio Field Editor" value="builder" />
           <Tab icon={<PlayArrowIcon />} iconPosition="start" label="Live Form Preview" value="preview" />
         </Tabs>
@@ -83,7 +93,7 @@ export const MetastructWorkbench: React.FC = () => {
 
       {activeTab === "builder" && (
         <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-          <SchemaFieldCanvas schema={schema} onSchemaChange={setSchema} />
+          <SchemaFieldCanvas schema={schema as any} onSchemaChange={(updated) => setSchema(updated as EntitySchema)} />
         </Paper>
       )}
 
@@ -96,7 +106,7 @@ export const MetastructWorkbench: React.FC = () => {
               </Typography>
               <Divider sx={{ mb: 3 }} />
 
-              {Object.entries(schema.fields).map(([fieldId, field]) => {
+              {Object.entries(schema.fields || {}).map(([fieldId, field]) => {
                 if (!visibleFields.includes(fieldId)) return null;
 
                 return (
@@ -105,7 +115,7 @@ export const MetastructWorkbench: React.FC = () => {
                     field={field}
                     value={computedState[fieldId]}
                     error={errors[fieldId]}
-                    onChange={(val) => handleFieldChange(fieldId, val)}
+                    onChange={(val: unknown) => handleFieldChange(fieldId, val)}
                     disabled={!!field.calculationRule}
                   />
                 );

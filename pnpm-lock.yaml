@@ -7,6 +7,19 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@emotion/react':
+        specifier: ^11.14.0
+        version: 11.14.0(@types/react@18.3.31)(react@18.3.1)
+      '@emotion/styled':
+        specifier: ^11.14.1
+        version: 11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1)
+      '@mui/icons-material':
+        specifier: ^5.18.0
+        version: 5.18.0(@mui/material@5.18.0(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.31)(react@18.3.1)
+      '@mui/material':
+        specifier: ^5.18.0
+        version: 5.18.0(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@types/node':
         specifier: ^20.11.0
@@ -26,9 +39,21 @@ importers:
 
   apps/test-app:
     dependencies:
+      '@metastruct/compiler':
+        specifier: workspace:*
+        version: link:../../packages/compiler
+      '@metastruct/expression-engine':
+        specifier: workspace:*
+        version: link:../../packages/expression-engine
+      '@metastruct/meta-core':
+        specifier: workspace:*
+        version: link:../../packages/meta-core
       '@metastruct/platform-ui':
         specifier: workspace:*
         version: link:../../packages/platform-ui
+      '@metastruct/studio-ui':
+        specifier: workspace:*
+        version: link:../../packages/studio-ui
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -128,9 +153,15 @@ importers:
       '@emotion/styled':
         specifier: ^11.11.0
         version: 11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1)
+      '@metastruct/compiler':
+        specifier: workspace:*
+        version: link:../compiler
       '@metastruct/expression-engine':
         specifier: workspace:*
         version: link:../expression-engine
+      '@metastruct/meta-core':
+        specifier: workspace:*
+        version: link:../meta-core
       '@metastruct/platform-ui':
         specifier: workspace:*
         version: link:../platform-ui

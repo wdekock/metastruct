@@ -10,7 +10,11 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@metastruct/compiler": "workspace:*",
+    "@metastruct/expression-engine": "workspace:*",
+    "@metastruct/meta-core": "workspace:*",
     "@metastruct/platform-ui": "workspace:*",
+    "@metastruct/studio-ui": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
