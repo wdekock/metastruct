@@ -1,0 +1,28 @@
+{
+  $id: "https://metastruct.io/schemas/ui-spec.json",
+  type: "object",
+  properties: {
+    sections: {
+      type: "array",
+      items: {
+        type: "object",
+        required: ["title", "fields"],
+        properties: {
+          title: { type: "string" },
+          fields: {
+            type: "array",
+            items: {
+              oneOf: [
+                { type: "string" }, // Key string references
+                {
+                  type: "object",
+                  required: ["key"],
+                  properties: { key: { type: "string" } }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
