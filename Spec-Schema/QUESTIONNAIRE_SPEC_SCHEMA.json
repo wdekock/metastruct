@@ -1,0 +1,64 @@
+{
+  $id: "https://metastruct.io/schemas/questionnaire-spec.json",
+  type: "object",
+  required: ["id", "title", "targetEntity", "questions", "steps"],
+  properties: {
+    id: { type: "string" },
+    title: { type: "string" },
+    version: { type: "string" },
+    targetEntity: { type: "string" },
+
+    questions: {
+      type: "object",
+      additionalProperties: {
+        type: "object",
+        required: ["id", "entityName", "fieldKey", "questionText"],
+        properties: {
+          id: { type: "string" },
+          entityName: { type: "string" },
+          fieldKey: { 
+            type: "string",
+            description: "Direct binding to entitySpec property key." 
+          },
+          questionText: { type: "string" },
+          helpText: { type: "string", nullable: true },
+          
+          // Display Widget Definition
+          widget: {
+            type: "object",
+            description: "Widget metadata. If omitted, compiler resolves from entitySpec/uiSpec field widget.",
+            properties: {
+              type: { 
+                type: "string",
+                description: "Widget key (e.g., 'MuiTextField', 'MuiSelect', 'MuiDatePicker', 'CustomSlider')" 
+              },
+              props: { 
+                type: "object",
+                description: "Custom UI component properties passed directly to Material UI component." 
+              }
+            }
+          },
+
+          readOnly: { type: "boolean" },
+          isRequired: { type: "boolean" }
+        }
+      }
+    },
+
+    initialStep: { type: "string" },
+    steps: {
+      type: "object",
+      additionalProperties: {
+        type: "object",
+        required: ["id", "title", "questionIds"],
+        properties: {
+          id: { type: "string" },
+          title: { type: "string" },
+          questionIds: {
+            type: "array",
+            items: { type: "string" }
+          }
+        }
+      }
+    }
+  }
