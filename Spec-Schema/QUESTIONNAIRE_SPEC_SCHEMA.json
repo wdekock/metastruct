@@ -2,16 +2,16 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://metastruct.io/schemas/questionnaire-spec.json",
   "title": "Questionnaire Specification Schema",
-  "description": "Workflow step execution contract binding questions directly to entity fields and display widgets.",
+  "description": "Guided data-capture definition binding questions to entity fields, step sequences, and branching transitions.",
   "type": "object",
-  "required": ["id", "title", "targetEntity", "questions", "steps", "initialStep"],
+  "required": ["id", "title", "targetEntity", "questions", "steps", "initialStep", "transitions"],
   "properties": {
     "id": { "type": "string" },
     "title": { "type": "string" },
     "version": { "type": "string" },
     "targetEntity": { 
       "type": "string",
-      "description": "Q-001: Target entitySpec title this questionnaire gathers data for."
+      "description": "Primary context entity for questionnaire execution."
     },
     "questions": {
       "type": "object",
@@ -20,21 +20,20 @@
         "required": ["id", "entityName", "fieldKey", "questionText"],
         "properties": {
           "id": { "type": "string" },
-          "entityName": { 
-            "type": "string",
-            "description": "Q-002: Name of the domain entity model."
-          },
-          "fieldKey": { 
-            "type": "string",
-            "description": "Q-003: Property key on the target entity."
-          },
+          "entityName": { "type": "string" },
+          "fieldKey": { "type": "string" },
           "questionText": { "type": "string" },
           "helpText": { "type": ["string", "null"] },
           "placeholder": { "type": ["string", "null"] },
-          "isRequired": { "type": "boolean" },
+          "isRequired": { 
+            "type": "boolean",
+            "description": "Rule Q-005: Governs question mandate during questionnaire execution, independent of Entity property 'required'."
+          },
           "readOnly": { "type": "boolean" },
           "widget": {
             "type": "object",
+            "description": "Rule Q-006: Optional presentation override. If omitted, compiler cascades to UI Spec widget, then Metastruct default widget.",
+            "required": ["type"],
             "properties": {
               "type": { "type": "string" },
               "props": { "type": "object" }
@@ -62,11 +61,34 @@
             "required": ["questionId", "operator", "value"],
             "properties": {
               "questionId": { "type": "string" },
-              "operator": { "type": "string" },
-              "value": { "nullable": true }
+              "operator": { 
+                "type": "string",
+                "enum": [
+                  "equals",
+                  "notEquals",
+                  "contains",
+                  "greaterThan",
+                  "lessThan",
+                  "in",
+                  "notIn",
+                  "exists",
+                  "isTrue",
+                  "isFalse"
+                ] 
+              },
+              "value": { 
+                "type": ["string", "number", "boolean", "array", "object", "null"] 
+              }
             }
           }
         }
+      }
+    },
+    "transitions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
       }
     }
   }
