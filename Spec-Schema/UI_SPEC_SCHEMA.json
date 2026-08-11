@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://metastruct.io/schemas/ui-spec.json",
   "title": "UI Specification Schema",
-  "description": "Presentation layout contract grouping fields into visual sections with display widgets and business-value metadata.",
+  "description": "CRUD presentation layout contract grouping entity fields into visual sections with technology-agnostic widget types.",
   "type": "object",
   "required": ["sections"],
   "properties": {
@@ -19,13 +19,16 @@
             "type": "array",
             "items": {
               "oneOf": [
-                { "type": "string", "description": "Simple string key referring to entity property." },
+                { 
+                  "type": "string", 
+                  "description": "Key referencing entitySpec property." 
+                },
                 {
                   "type": "object",
                   "required": ["key"],
                   "properties": {
                     "key": { "type": "string" },
-                    "label": { "type": "string" },
+                    "label": { "type": ["string", "null"] },
                     "readOnly": { "type": "boolean" },
                     "widget": {
                       "type": "object",
@@ -33,7 +36,17 @@
                       "properties": {
                         "type": { 
                           "type": "string",
-                          "description": "Material UI or custom widget component name (e.g. 'MuiTextField')." 
+                          "enum": [
+                            "text",
+                            "number",
+                            "select",
+                            "datepicker",
+                            "checkbox",
+                            "textarea",
+                            "radio",
+                            "custom"
+                          ],
+                          "description": "Rule UI-003: Abstract UI presentation token mapped by runtime renderers." 
                         },
                         "props": { "type": "object" }
                       }
