@@ -1,28 +1,59 @@
 {
-  $id: "https://metastruct.io/schemas/entity-spec.json",
-  type: "object",
-  required: ["title", "properties"],
-  properties: {
-    title: { type: "string" },
-    version: { type: "string" },
-    required: {
-      type: "array",
-      items: { type: "string" }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://metastruct.io/schemas/entity-spec.json",
+  "title": "Entity Specification Schema",
+  "description": "Domain data model defining primary keys, field data types, foreign keys, and entity relationships.",
+  "type": "object",
+  "required": ["title", "primaryKey", "properties"],
+  "properties": {
+    "title": { "type": "string" },
+    "version": { "type": "string" },
+    "primaryKey": { 
+      "type": "string",
+      "description": "DM-001 & DM-002: Unique property key representing the primary identity (UID) of this entity."
     },
-    properties: {
-      type: "object",
-      additionalProperties: {
-        type: "object",
-        properties: {
-          type: { type: "string" },
-          title: { type: "string" },
-          default: { nullable: true },
-          minLength: { type: "integer" },
-          maxLength: { type: "integer" },
-          minimum: { type: "number" },
-          maximum: { type: "number" },
-          pattern: { type: "string" }
+    "required": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string" },
+          "title": { "type": "string" },
+          "default": { "nullable": true },
+          "minLength": { "type": "integer" },
+          "maxLength": { "type": "integer" },
+          "minimum": { "type": "number" },
+          "maximum": { "type": "number" },
+          "pattern": { "type": "string" },
+          "isForeignKey": { "type": "boolean" },
+          "foreignEntity": { 
+            "type": "string",
+            "description": "DM-004 & DM-005: Name of the target entity this foreign key points to."
+          }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "DM-006: Entity-to-entity relationship definitions.",
+      "items": {
+        "type": "object",
+        "required": ["name", "targetEntity", "type", "foreignKey"],
+        "properties": {
+          "name": { "type": "string" },
+          "targetEntity": { "type": "string" },
+          "type": { 
+            "type": "string", 
+            "enum": ["oneToOne", "oneToMany", "manyToOne", "manyToMany"] 
+          },
+          "foreignKey": { "type": "string" }
         }
       }
     }
   }
+}
