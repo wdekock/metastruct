@@ -1,64 +1,73 @@
 {
-  $id: "https://metastruct.io/schemas/questionnaire-spec.json",
-  type: "object",
-  required: ["id", "title", "targetEntity", "questions", "steps"],
-  properties: {
-    id: { type: "string" },
-    title: { type: "string" },
-    version: { type: "string" },
-    targetEntity: { type: "string" },
-
-    questions: {
-      type: "object",
-      additionalProperties: {
-        type: "object",
-        required: ["id", "entityName", "fieldKey", "questionText"],
-        properties: {
-          id: { type: "string" },
-          entityName: { type: "string" },
-          fieldKey: { 
-            type: "string",
-            description: "Direct binding to entitySpec property key." 
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://metastruct.io/schemas/questionnaire-spec.json",
+  "title": "Questionnaire Specification Schema",
+  "description": "Workflow step execution contract binding questions directly to entity fields and display widgets.",
+  "type": "object",
+  "required": ["id", "title", "targetEntity", "questions", "steps", "initialStep"],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "version": { "type": "string" },
+    "targetEntity": { 
+      "type": "string",
+      "description": "Q-001: Target entitySpec title this questionnaire gathers data for."
+    },
+    "questions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "entityName", "fieldKey", "questionText"],
+        "properties": {
+          "id": { "type": "string" },
+          "entityName": { 
+            "type": "string",
+            "description": "Q-002: Name of the domain entity model."
           },
-          questionText: { type: "string" },
-          helpText: { type: "string", nullable: true },
-          
-          // Display Widget Definition
-          widget: {
-            type: "object",
-            description: "Widget metadata. If omitted, compiler resolves from entitySpec/uiSpec field widget.",
-            properties: {
-              type: { 
-                type: "string",
-                description: "Widget key (e.g., 'MuiTextField', 'MuiSelect', 'MuiDatePicker', 'CustomSlider')" 
-              },
-              props: { 
-                type: "object",
-                description: "Custom UI component properties passed directly to Material UI component." 
-              }
+          "fieldKey": { 
+            "type": "string",
+            "description": "Q-003: Property key on the target entity."
+          },
+          "questionText": { "type": "string" },
+          "helpText": { "type": ["string", "null"] },
+          "placeholder": { "type": ["string", "null"] },
+          "isRequired": { "type": "boolean" },
+          "readOnly": { "type": "boolean" },
+          "widget": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "props": { "type": "object" }
             }
-          },
-
-          readOnly: { type: "boolean" },
-          isRequired: { type: "boolean" }
+          }
         }
       }
     },
-
-    initialStep: { type: "string" },
-    steps: {
-      type: "object",
-      additionalProperties: {
-        type: "object",
-        required: ["id", "title", "questionIds"],
-        properties: {
-          id: { type: "string" },
-          title: { type: "string" },
-          questionIds: {
-            type: "array",
-            items: { type: "string" }
+    "initialStep": { "type": "string" },
+    "steps": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "title", "questionIds"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": ["string", "null"] },
+          "questionIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "visibilityCondition": {
+            "type": ["object", "null"],
+            "required": ["questionId", "operator", "value"],
+            "properties": {
+              "questionId": { "type": "string" },
+              "operator": { "type": "string" },
+              "value": { "nullable": true }
+            }
           }
         }
       }
     }
   }
+}
