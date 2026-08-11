@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://metastruct.io/schemas/entity-spec.json",
   "title": "Entity Specification Schema",
-  "description": "Domain data model defining primary keys, field data types, foreign keys, and entity relationships.",
+  "description": "Canonical business data model defining entity primary keys, property types, foreign key constraints, and relationships.",
   "type": "object",
   "required": ["title", "primaryKey", "properties"],
   "properties": {
@@ -10,7 +10,7 @@
     "version": { "type": "string" },
     "primaryKey": { 
       "type": "string",
-      "description": "DM-001 & DM-002: Unique property key representing the primary identity (UID) of this entity."
+      "description": "DM-001 & DM-002: Property key acting as the unique identity (UID) for this entity."
     },
     "required": {
       "type": "array",
@@ -24,7 +24,9 @@
         "properties": {
           "type": { "type": "string" },
           "title": { "type": "string" },
-          "default": { "nullable": true },
+          "default": { 
+            "type": ["string", "number", "boolean", "array", "object", "null"] 
+          },
           "minLength": { "type": "integer" },
           "maxLength": { "type": "integer" },
           "minimum": { "type": "number" },
@@ -32,15 +34,15 @@
           "pattern": { "type": "string" },
           "isForeignKey": { "type": "boolean" },
           "foreignEntity": { 
-            "type": "string",
-            "description": "DM-004 & DM-005: Name of the target entity this foreign key points to."
+            "type": ["string", "null"],
+            "description": "DM-004 & DM-005: Name of target entity this FK references."
           }
         }
       }
     },
     "relationships": {
       "type": "array",
-      "description": "DM-006: Entity-to-entity relationship definitions.",
+      "description": "DM-006: Explicit entity-to-entity relationship mappings.",
       "items": {
         "type": "object",
         "required": ["name", "targetEntity", "type", "foreignKey"],
