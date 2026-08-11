@@ -1,23 +1,44 @@
 {
-  $id: "https://metastruct.io/schemas/ui-spec.json",
-  type: "object",
-  properties: {
-    sections: {
-      type: "array",
-      items: {
-        type: "object",
-        required: ["title", "fields"],
-        properties: {
-          title: { type: "string" },
-          fields: {
-            type: "array",
-            items: {
-              oneOf: [
-                { type: "string" }, // Key string references
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://metastruct.io/schemas/ui-spec.json",
+  "title": "UI Specification Schema",
+  "description": "Presentation layout contract grouping fields into visual sections with display widgets and business-value metadata.",
+  "type": "object",
+  "required": ["sections"],
+  "properties": {
+    "title": { "type": "string" },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "fields"],
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": ["string", "null"] },
+          "fields": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                { "type": "string", "description": "Simple string key referring to entity property." },
                 {
-                  type: "object",
-                  required: ["key"],
-                  properties: { key: { type: "string" } }
+                  "type": "object",
+                  "required": ["key"],
+                  "properties": {
+                    "key": { "type": "string" },
+                    "label": { "type": "string" },
+                    "readOnly": { "type": "boolean" },
+                    "widget": {
+                      "type": "object",
+                      "required": ["type"],
+                      "properties": {
+                        "type": { 
+                          "type": "string",
+                          "description": "Material UI or custom widget component name (e.g. 'MuiTextField')." 
+                        },
+                        "props": { "type": "object" }
+                      }
+                    }
+                  }
                 }
               ]
             }
@@ -26,3 +47,4 @@
       }
     }
   }
+}
