@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://metastruct.io/schemas/system-manifest.json",
   "title": "System Manifest Schema",
-  "description": "Compiled, runtime-ready manifest output generated from Entity, UI, and Questionnaire source specs.",
+  "description": "Normalized runtime artifact produced by compiler containing schemas, layout, and complete questionnaire state.",
   "type": "object",
   "required": [
     "entityName",
@@ -13,22 +13,14 @@
     "compiledAt"
   ],
   "properties": {
-    "entityName": {
+    "entityName": { "type": "string" },
+    "version": { "type": "string" },
+    "compiledAt": { 
       "type": "string",
-      "description": "The title or identifier of the compiled entity."
-    },
-    "version": {
-      "type": "string",
-      "description": "Version string of the compiled manifest."
-    },
-    "compiledAt": {
-      "type": "string",
-      "format": "date-time",
-      "description": "ISO timestamp indicating when the manifest was generated."
+      "format": "date-time"
     },
     "schema": {
       "type": "object",
-      "description": "Normalized field definitions mapped by field key.",
       "additionalProperties": {
         "type": "object",
         "required": ["key", "type", "label", "required", "widget"],
@@ -37,38 +29,21 @@
           "type": { "type": "string" },
           "label": { "type": "string" },
           "required": { "type": "boolean" },
-          "defaultValue": { "type": ["string", "number", "boolean", "array", "object", "null"] },
+          "defaultValue": { "nullable": true },
           "widget": {
             "type": "object",
             "required": ["type"],
             "properties": {
-              "type": { 
-                "type": "string",
-                "description": "Material UI or custom widget component name (e.g., 'MuiTextField', 'MuiDatePicker')."
-              },
-              "props": { 
-                "type": "object",
-                "description": "Props passed directly to the Material UI component."
-              }
+              "type": { "type": "string" },
+              "props": { "type": "object" }
             }
           },
-          "validationRules": {
-            "type": "object",
-            "properties": {
-              "minLength": { "type": ["integer", "null"] },
-              "maxLength": { "type": ["integer", "null"] },
-              "minimum": { "type": ["number", "null"] },
-              "maximum": { "type": ["number", "null"] },
-              "pattern": { "type": ["string", "null"] }
-            },
-            "additionalProperties": true
-          }
+          "validationRules": { "type": "object" }
         }
       }
     },
     "layout": {
       "type": "array",
-      "description": "Compiled UI layout sections with embedded normalized fields.",
       "items": {
         "type": "object",
         "required": ["title", "fields"],
@@ -85,15 +60,23 @@
     },
     "questionnaireState": {
       "type": "object",
-      "description": "Compiled runtime state for questionnaire execution, questions, steps, and transitions.",
-      "required": ["initialStep", "questions", "steps", "allowedTransitions"],
+      "required": [
+        "id",
+        "title",
+        "targetEntity",
+        "initialStep",
+        "questions",
+        "steps",
+        "allowedTransitions"
+      ],
       "properties": {
-        "initialStep": { 
-          "type": ["string", "null"] 
-        },
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "version": { "type": ["string", "null"] },
+        "targetEntity": { "type": "string" },
+        "initialStep": { "type": ["string", "null"] },
         "questions": {
           "type": "object",
-          "description": "Resolved questions linked to entity properties and UI widgets.",
           "additionalProperties": {
             "type": "object",
             "required": ["id", "entityName", "fieldKey", "questionText", "widget"],
@@ -111,34 +94,9 @@
             }
           }
         },
-        "steps": {
-          "type": "object",
-          "description": "Step execution graph with question order and branching logic.",
-          "additionalProperties": {
-            "type": "object",
-            "required": ["id", "title", "questionIds"],
-            "properties": {
-              "id": { "type": "string" },
-              "title": { "type": "string" },
-              "description": { "type": ["string", "null"] },
-              "questionIds": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "visibilityCondition": {
-                "type": ["object", "null"],
-                "properties": {
-                  "questionId": { "type": "string" },
-                  "operator": { "type": "string" },
-                  "value": { "type": ["string", "number", "boolean", "null"] }
-                }
-              }
-            }
-          }
-        },
+        "steps": { "type": "object" },
         "allowedTransitions": {
           "type": "object",
-          "description": "State transition adjacency list.",
           "additionalProperties": {
             "type": "array",
             "items": { "type": "string" }
