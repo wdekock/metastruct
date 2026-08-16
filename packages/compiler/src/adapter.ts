@@ -1,20 +1,42 @@
-import { SystemManifest, MasterCompiler } from "./master_compiler";
+import {
+  CompileContext,
+  MasterCompiler,
+  SystemManifest,
+} from './master_compiler.js';
 
-export function adaptToSystemManifest(rawManifest: any): SystemManifest {
-  // If already in new shape, return directly
-  if (rawManifest && rawManifest.entityName && rawManifest.schema && rawManifest.layout) {
-    return rawManifest as SystemManifest;
-  }
+export function compileSystem(
+  context: CompileContext
+): SystemManifest {
+  const compiler = new MasterCompiler();
+  return compiler.compile(context);
+}
 
-  // Handle legacy shape (manifest.entity, manifest.ui, manifest.workflow)
-  if (rawManifest && rawManifest.entity) {
-    const compiler = new MasterCompiler();
-    return compiler.compile(
-      rawManifest.entity,
-      rawManifest.ui,
-      rawManifest.workflow
+export function adaptToSystemManifest(
+  rawManifest: unknown
+): SystemManifest {
+  if (!rawManifest || typeof rawManifest !== 'object') {
+    throw new Error(
+      'Invalid manifest payload.'
     );
   }
 
-  throw new Error("Invalid manifest payload: Cannot adapt given object to SystemManifest.");
+  const candidate =
+    rawManifest as Partial<SystemManifest>;
+
+  /*
+   * A compiled System Manifest is already immutable runtime data.
+   */
+  if (
+    typeof candidate.systemId === 'string' &&
+    typeof candidate.version === 'string' &&
+    typeof candidate.compiledAt === 'string' &&
+    candidate.entities &&
+    candidate.questionnaires
+  ) {
+    return candidate as SystemManifest;
+  }
+
+  throw new Error(
+    'Invalid System Manifest. Expected the canonical compiled manifest shape.'
+  );
 }
