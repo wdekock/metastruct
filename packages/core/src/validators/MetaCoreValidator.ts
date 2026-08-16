@@ -2,89 +2,157 @@ import { StructuralValidator } from './structuralValidator.js';
 import { evaluateEntityLaws } from './entityLawEvaluator.js';
 import { evaluateUILaws } from './uiLawEvaluator.js';
 import { evaluateQuestionnaireLaws } from './qLawEvaluator.js';
-import { ValidationContext, Violation } from '../laws/types.js';
+import {
+  ValidationContext,
+  Violation,
+} from '../laws/types.js';
 import { LawViolationError } from '../laws/LawViolationError.js';
 
-export class MetaCoreValidator {
-  private structuralValidator: StructuralValidator;
+export class CoreValidator {
+  private readonly structuralValidator: StructuralValidator;
 
   constructor(schemas?: {
     entitySchema?: object;
     uiSchema?: object;
     questionnaireSchema?: object;
   }) {
-    this.structuralValidator = new StructuralValidator();
+    this.structuralValidator =
+      new StructuralValidator();
 
     if (schemas?.entitySchema) {
-      this.structuralValidator.registerSchema('entitySpec', schemas.entitySchema);
+      this.structuralValidator.registerSchema(
+        'entitySpec',
+        schemas.entitySchema
+      );
     }
+
     if (schemas?.uiSchema) {
-      this.structuralValidator.registerSchema('uiSpec', schemas.uiSchema);
+      this.structuralValidator.registerSchema(
+        'uiSpec',
+        schemas.uiSchema
+      );
     }
+
     if (schemas?.questionnaireSchema) {
-      this.structuralValidator.registerSchema('questionnaireSpec', schemas.questionnaireSchema);
+      this.structuralValidator.registerSchema(
+        'questionnaireSpec',
+        schemas.questionnaireSchema
+      );
     }
   }
 
-  public validateContext(context: ValidationContext, throwOnError = true): Violation[] {
+  public validateContext(
+    context: ValidationContext,
+    throwOnError = true
+  ): Violation[] {
     const violations: Violation[] = [];
 
-    // Phase 1: Evaluate Entity Specs
-    for (const [entityName, entitySpec] of Object.entries(context.entities)) {
-      // AJV Structural validation
-      try {
-        const structErrors = this.structuralValidator.validate('entitySpec', entitySpec, 'EntitySpec');
-        violations.push(...structErrors);
-      } catch {
-        // Schema not registered, skip AJV phase
-      }
+    for (const entitySpec of Object.values(
+      context.entities
+    )) {
+      violations.push(
+        ...this.validateStructural(
+          'entitySpec',
+          entitySpec,
+          'EntitySpec'
+        )
+      );
 
-      // Domain Semantic Laws (DM-*)
-      const entityViolations = evaluateEntityLaws(entitySpec, context);
-      violations.push(...entityViolations);
+      violations.push(
+        ...evaluateEntityLaws(
+          entitySpec,
+          context
+        )
+      );
     }
 
-    // Phase 2: Evaluate UI Specs
     if (context.uiSpecs) {
-      for (const [entityName, uiSpec] of Object.entries(context.uiSpecs)) {
-        try {
-          const structErrors = this.structuralValidator.validate('uiSpec', uiSpec, 'UISpec');
-          violations.push(...structErrors);
-        } catch {
-          // Schema not registered, skip AJV phase
+      for (const [
+        entityName,
+        uiSpec,
+      ] of Object.entries(context.uiSpecs)) {
+        violations.push(
+          ...this.validateStructural(
+            'uiSpec',
+            uiSpec,
+            'UISpec'
+          )
+        );
+
+        const entity =
+          context.entities[entityName];
+
+        if (!entity) {
+          continue;
         }
 
-        const entity = context.entities[entityName];
-        if (entity) {
-          const uiViolations = evaluateUILaws(uiSpec, entity);
-          violations.push(...uiViolations);
-        }
+        violations.push(
+          ...evaluateUILaws(
+            uiSpec,
+            entity
+          )
+        );
       }
     }
 
-    // Phase 3: Evaluate Questionnaire Specs
     if (context.questionnaires) {
-      for (const qSpec of Object.values(context.questionnaires)) {
-        try {
-          const structErrors = this.structuralValidator.validate(
+      for (const questionnaire of Object.values(
+        context.questionnaires
+      )) {
+        violations.push(
+          ...this.validateStructural(
             'questionnaireSpec',
-            qSpec,
+            questionnaire,
             'QuestionnaireSpec'
-          );
-          violations.push(...structErrors);
-        } catch {
-          // Schema not registered, skip AJV phase
-        }
+          )
+        );
 
-        const qViolations = evaluateQuestionnaireLaws(qSpec, context);
-        violations.push(...qViolations);
+        violations.push(
+          ...evaluateQuestionnaireLaws(
+            questionnaire,
+            context
+          )
+        );
       }
     }
 
-    if (violations.length > 0 && throwOnError) {
-      throw new LawViolationError(violations);
+    if (
+      violations.length > 0 &&
+      throwOnError
+    ) {
+      throw new LawViolationError(
+        violations
+      );
     }
 
     return violations;
   }
+
+  private validateStructural(
+    schemaId: string,
+    data: unknown,
+    specType: Violation['specType']
+  ): Violation[] {
+    try {
+      return this.structuralValidator.validate(
+        schemaId,
+        data,
+        specType
+      );
+    } catch {
+      /*
+       * Structural schemas are optional at this layer.
+       * Semantic laws remain authoritative.
+       */
+      return [];
+    }
+  }
 }
+
+/*
+ * Temporary compatibility alias.
+ *
+ * This allows code to migrate from the old class name
+ * without preserving the old @metastruct/meta-core package.
+ */
+export class MetaCoreValidator extends CoreValidator {}
