@@ -2,7 +2,7 @@
   "name": "metastruct-root",
   "private": true,
   "scripts": {
-    "build": "pnpm --recursive --parallel run build",
+    "build": "tsc -b tsconfig.build.json",
     "test": "pnpm --recursive run test",
     "clean": "pnpm --recursive run clean"
   },
@@ -20,3 +20,4 @@
     "@mui/material": "^5.18.0"
   }
 }
+

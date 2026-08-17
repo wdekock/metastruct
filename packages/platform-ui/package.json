@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@metastruct/meta-core": "workspace:*",
-    "@metastruct/compiler": "workspace:*"
+    "@metastruct/compiler": "workspace:*",
+    "@metastruct/expression-engine": "workspace:*"
   },
   "peerDependencies": {
     "@emotion/react": "^11.11.0",

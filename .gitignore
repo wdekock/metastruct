@@ -9,6 +9,7 @@ dist/
 **/.vite/
 coverage/
 **/coverage/
+*.tsbuildinfo
 
 # Environment & Local Secrets
 .env

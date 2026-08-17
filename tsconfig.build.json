@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/expression-engine" },
+    { "path": "./packages/meta-core" },
+    { "path": "./packages/compiler" },
+    { "path": "./packages/platform-ui" },
+    { "path": "./packages/studio-ui" }
+  ]
+}

@@ -91,19 +91,24 @@ importers:
 
   packages/compiler:
     dependencies:
-      '@metastruct/meta-core':
+      '@metastruct/core':
         specifier: workspace:*
-        version: link:../meta-core
+        version: link:../core
+
+  packages/core:
+    dependencies:
+      ajv:
+        specifier: ^8.12.0
+        version: 8.20.0
+      ajv-formats:
+        specifier: ^2.1.1
+        version: 2.1.1(ajv@8.20.0)
 
   packages/expression-engine:
     dependencies:
       jsonata:
-        specifier: ^2.0.4
+        specifier: ^2.1.0
         version: 2.2.2
-    devDependencies:
-      typescript:
-        specifier: ^5.3.3
-        version: 5.9.3
 
   packages/meta-core:
     dependencies:
@@ -125,6 +130,9 @@ importers:
       '@metastruct/compiler':
         specifier: workspace:*
         version: link:../compiler
+      '@metastruct/expression-engine':
+        specifier: workspace:*
+        version: link:../expression-engine
       '@metastruct/meta-core':
         specifier: workspace:*
         version: link:../meta-core
@@ -147,43 +155,12 @@ importers:
 
   packages/studio-ui:
     dependencies:
-      '@emotion/react':
-        specifier: ^11.11.0
-        version: 11.14.0(@types/react@18.3.31)(react@18.3.1)
-      '@emotion/styled':
-        specifier: ^11.11.0
-        version: 11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1)
-      '@metastruct/compiler':
-        specifier: workspace:*
-        version: link:../compiler
       '@metastruct/expression-engine':
         specifier: workspace:*
         version: link:../expression-engine
-      '@metastruct/meta-core':
-        specifier: workspace:*
-        version: link:../meta-core
       '@metastruct/platform-ui':
         specifier: workspace:*
         version: link:../platform-ui
-      '@mui/icons-material':
-        specifier: ^5.15.0
-        version: 5.18.0(@mui/material@5.18.0(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.31)(react@18.3.1)
-      '@mui/material':
-        specifier: ^5.15.0
-        version: 5.18.0(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.3.1(react@18.3.1)
-    devDependencies:
-      '@types/react':
-        specifier: ^18.2.0
-        version: 18.3.31
-      typescript:
-        specifier: ^5.3.3
-        version: 5.9.3
 
 packages:
 

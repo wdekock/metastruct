@@ -1,27 +1,13 @@
 {
   "name": "@metastruct/studio-ui",
-  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "scripts": {
-    "build": "tsc"
-  },
   "dependencies": {
-    "@metastruct/compiler": "workspace:*",
     "@metastruct/expression-engine": "workspace:*",
-    "@metastruct/meta-core": "workspace:*",
-    "@metastruct/platform-ui": "workspace:*",
-    "@mui/material": "^5.15.0",
-    "@mui/icons-material": "^5.15.0",
-    "@emotion/react": "^11.11.0",
-    "@emotion/styled": "^11.11.0"
-  },
-  "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.3.3",
-    "@types/react": "^18.2.0"
+    "@metastruct/platform-ui": "workspace:*"
   }
 }

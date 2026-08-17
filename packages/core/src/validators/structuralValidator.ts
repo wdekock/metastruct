@@ -2,8 +2,8 @@ import Ajv2020, { ValidateFunction } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { Violation } from '../laws/types.js';
 
-const ajv = new Ajv2020.default({ allErrors: true, strict: false });
-addFormats.default(ajv);
+const ajv = new Ajv2020({ allErrors: true, strict: false });
+addFormats(ajv);
 
 export class StructuralValidator {
   private validators: Map<string, ValidateFunction> = new Map();
@@ -13,13 +13,21 @@ export class StructuralValidator {
     this.validators.set(schemaId, validate);
   }
 
-  public validate(schemaId: string, data: unknown, specType: Violation['specType']): Violation[] {
+  public validate(
+    schemaId: string,
+    data: unknown,
+    specType: Violation['specType'],
+  ): Violation[] {
     const validate = this.validators.get(schemaId);
+
     if (!validate) {
-      throw new Error(`Schema ID '${schemaId}' is not registered in StructuralValidator.`);
+      throw new Error(
+        `Schema ID '${schemaId}' is not registered in StructuralValidator.`,
+      );
     }
 
     const valid = validate(data);
+
     if (valid) return [];
 
     return (validate.errors || []).map((err) => ({

@@ -8,10 +8,18 @@
     "declaration": true,
     "declarationMap": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
-    { "path": "../compiler" },
-    { "path": "../expression-engine" },
-    { "path": "../meta-core" }
+    {
+      "path": "../compiler"
+    },
+    {
+      "path": "../expression-engine"
+    },
+    {
+      "path": "../meta-core"
+    }
   ]
 }

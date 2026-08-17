@@ -1,15 +1,12 @@
 {
   "name": "@metastruct/expression-engine",
-  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "scripts": {
-    "build": "tsc"
-  },
   "dependencies": {
-    "jsonata": "^2.0.4"
-  },
-  "devDependencies": {
-    "typescript": "^5.3.3"
+    "jsonata": "^2.1.0"
   }
 }

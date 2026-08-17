@@ -4,19 +4,11 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "declaration": true,
-    "declarationMap": true,
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "@metastruct/expression-engine": ["./packages/expression-engine/src/index.ts"],
-      "@metastruct/platform-ui": ["./packages/platform-ui/src/index.ts"],
-      "@metastruct/studio-ui": ["./packages/studio-ui/src/index.ts"],
-      "@metastruct/compiler": ["./packages/compiler/src/index.ts"]
-    }
+    "baseUrl": "."
   }
 }

@@ -8,11 +8,21 @@
     "declaration": true,
     "declarationMap": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
-    { "path": "../expression-engine" },
-    { "path": "../compiler" },
-    { "path": "../meta-core" },
-    { "path": "../platform-ui" }
+    {
+      "path": "../expression-engine"
+    },
+    {
+      "path": "../compiler"
+    },
+    {
+      "path": "../meta-core"
+    },
+    {
+      "path": "../platform-ui"
+    }
   ]
 }
