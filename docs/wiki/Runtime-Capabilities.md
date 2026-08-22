@@ -1,5 +1,7 @@
 # Runtime Capabilities
 
+The runtime is organized around three application stages: data/API, generated UI, and questionnaire workflow. The sections below describe what is implemented today and where the stage connections are still incomplete.
+
 ## Expression Engine
 
 `ExpressionEngine` accepts an expression schema with fields, calculation rules, and visibility rules. Expressions may reference values through `$state.fieldName` or `state.fieldName`.

@@ -2,6 +2,20 @@
 
 Metastruct uses separate specifications so data shape, user questions, and presentation can evolve independently.
 
+## Staged Flow
+
+The intended flow is:
+
+```text
+Entity JSON
+	-> Stage 1: API and persistence contract
+	-> Stage 2: UI JSON and generated CRUD/list/hierarchy views
+	-> Stage 3: Questionnaire JSON and step workflow
+	-> compiled SystemManifest
+```
+
+The entity specification is authoritative. UI and questionnaire specifications refer back to entity names and field keys instead of creating a second data model.
+
 ## Entity Specification
 
 An entity has a title, version, primary key, and property map. Properties support a type, title, default, length or numeric constraints, regular-expression patterns, and foreign-key metadata. Relationships can express one-to-one, one-to-many, many-to-one, or many-to-many intent.

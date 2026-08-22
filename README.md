@@ -15,6 +15,30 @@ The repository is organized as a TypeScript monorepo with a small Python runtime
 - Evaluate expression-engine schemas with JSONata calculation and visibility rules, repeated evaluation passes, error collection, and circular-dependency detection.
 - Render a compiled entity/questionnaire as a React + Material UI workflow form.
 
+## Staged Application Model
+
+Metastruct is being developed as a sequence of connected stages. Each stage consumes the contract produced by the stage before it:
+
+```text
+1. Entity JSON -> FastAPI CRUD + OpenAPI/Swagger
+2. UI JSON -> generated CRUD/list/hierarchy views
+3. Questionnaire JSON -> step-based data-entry workflow
+```
+
+The entity model remains authoritative. UI JSON projects that model into widgets, lists, CRUD screens, and relationship-based hierarchy views. Questionnaire JSON then projects the same model into guided steps. The compiler's `SystemManifest` is the intended hand-off between these stages.
+
+### Stage 1: Data Model and API
+
+Entity JSON defines fields, keys, validation constraints, foreign keys, and relationships. The FastAPI runtime exposes CRUD behavior and automatic OpenAPI documentation. The current test runtime includes an in-memory CRUD implementation; durable persistence and full compiler-to-runtime integration remain future work.
+
+### Stage 2: UI and Generated Views
+
+UI JSON defines sections, labels, read-only state, widget choices, and widget properties. The intended output is generated CRUD forms, list views, and a hierarchy/tree derived from entity relationships. The current packages provide compiler layout normalization, Material UI widgets, and studio shell components; the default workflow form still renders its layout with basic text inputs.
+
+### Stage 3: Questionnaire and Steps
+
+Questionnaire JSON maps questions to entity fields, groups them into steps, defines an initial step, and restricts transitions. The compiler preserves this workflow information, and the platform form exposes allowed transitions. Step visibility evaluation, complete question-driven rendering, and full validation enforcement are not yet implemented in the default form path.
+
 ## Packages
 
 ### `@metastruct/core`
@@ -53,6 +77,8 @@ The four JSON Schemas under `Spec-Schema/` describe these contracts:
 | System Manifest | Compiled entities and questionnaires with normalized schema/layout data and compilation metadata |
 
 See [`docs/wiki/Schema-and-Compilation.md`](docs/wiki/Schema-and-Compilation.md) for the detailed mapping and [`docs/wiki/Runtime-Capabilities.md`](docs/wiki/Runtime-Capabilities.md) for supported runtime behavior and current limitations.
+
+Package documentation is available in the wiki drafts: [`core`](docs/wiki/Package-Core.md), [`compiler`](docs/wiki/Package-Compiler.md), [`expression-engine`](docs/wiki/Package-Expression-Engine.md), [`platform-ui`](docs/wiki/Package-Platform-UI.md), [`studio-ui`](docs/wiki/Package-Studio-UI.md), and [`meta-core`](docs/wiki/Package-Meta-Core.md).
 
 ## Development
 
