@@ -1,6 +1,6 @@
 # Runtime Capabilities
 
-The runtime is organized around three application stages: data/API, generated UI, and questionnaire workflow. The sections below describe what is implemented today and where the stage connections are still incomplete.
+The intended runtime is defined in [`Architecture.md`](Architecture.md). This page records only verified behavior and explicitly separates it from the intended design.
 
 ## Expression Engine
 
