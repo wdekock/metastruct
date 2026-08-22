@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Address",
+  "version": "1.0.0",
+  "primaryKey": "address_id",
+  "required": ["address_id", "line1", "city", "postal_code", "country"],
+  "properties": {
+    "address_id": {
+      "type": "uid",
+      "title": "Address ID"
+    },
+    "line1": {
+      "type": "string",
+      "title": "Address line 1",
+      "minLength": 1
+    },
+    "line2": {
+      "type": "string",
+      "title": "Address line 2"
+    },
+    "city": {
+      "type": "string",
+      "title": "City",
+      "minLength": 1
+    },
+    "state": {
+      "type": "string",
+      "title": "State or province"
+    },
+    "postal_code": {
+      "type": "string",
+      "title": "Postal code",
+      "minLength": 1
+    },
+    "country": {
+      "type": "string",
+      "title": "Country",
+      "minLength": 2
+    }
+  },
+  "relationships": [
+    {
+      "name": "clients",
+      "targetEntity": "Client",
+      "type": "oneToMany",
+      "foreignKey": "address_id"
+    }
+  ]
+}

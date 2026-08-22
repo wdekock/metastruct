@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Client",
+  "version": "1.0.0",
+  "primaryKey": "client_id",
+  "required": ["client_id", "name", "address_id"],
+  "properties": {
+    "client_id": {
+      "type": "uid",
+      "title": "Client ID"
+    },
+    "name": {
+      "type": "string",
+      "title": "Client name",
+      "minLength": 1
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "address_id": {
+      "type": "uid",
+      "title": "Address ID",
+      "isForeignKey": true,
+      "foreignEntity": "Address"
+    }
+  },
+  "relationships": [
+    {
+      "name": "address",
+      "targetEntity": "Address",
+      "type": "manyToOne",
+      "foreignKey": "address_id"
+    }
+  ]
+}
