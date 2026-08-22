@@ -5,6 +5,7 @@ import ReactDOM from "react-dom/client";
 import { adaptToSystemManifest } from "@metastruct/compiler";
 import { ExpressionEngine } from "@metastruct/expression-engine";
 import { SchemaFieldCanvas } from "@metastruct/studio-ui";
+import CheckpointRoute from "./routes/CheckpointRoute";
 
 import {
   Box,
@@ -399,6 +400,10 @@ export function UnifiedMasterDemo() {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <UnifiedMasterDemo />
+    {window.location.pathname === "/checkpoint" ? (
+      <CheckpointRoute />
+    ) : (
+      <UnifiedMasterDemo />
+    )}
   </React.StrictMode>
 );
