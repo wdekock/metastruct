@@ -17,12 +17,12 @@ export const ClientAddressRoute: React.FC = () => (
           Client address lookup
         </Typography>
         <Typography color="text.secondary">
-          The client stores an address ID. The address is a separate entity, so the API can reuse addresses and keep the data model normalized.
+          A client and an address are connected through ClientAddress. AddressType classifies the address and remains a leaf lookup entity.
         </Typography>
       </Box>
 
       <Alert severity="info">
-        Relationship: <strong>Client.address_id</strong> references <strong>Address.address_id</strong>.
+        Relationship: <strong>Client</strong> and <strong>Address</strong> are linked through <strong>ClientAddress</strong>.
       </Alert>
 
       <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
@@ -48,9 +48,17 @@ export const ClientAddressRoute: React.FC = () => (
         <Box component="pre" sx={{ m: 0, whiteSpace: "pre-wrap", fontFamily: "monospace" }}>
 {`GET /api/v1/entities/Client/records/{client_id}
             |
-            | client.address_id
+            | ClientAddress.client_id
             v
-GET /api/v1/entities/Address/records/{address_id}`}
+GET /api/v1/entities/ClientAddress/records?page=1&page_size=25
+            |
+            | ClientAddress.address_id
+            v
+GET /api/v1/entities/Address/records/{address_id}
+            |
+            | Address.address_type_id
+            v
+GET /api/v1/entities/AddressType/records/{address_type_id}`}
         </Box>
       </Paper>
 
