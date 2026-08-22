@@ -10,6 +10,7 @@ dist/
 coverage/
 **/coverage/
 *.tsbuildinfo
+*.d.ts.map
 
 # Environment & Local Secrets
 .env
