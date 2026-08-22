@@ -9,9 +9,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import domainSchemaSource from "../sources/domain-schema.json";
-
-const fields = Object.entries(domainSchemaSource.properties);
+import clientSource from "../../sources/client_entity_spec.json";
 
 export const StageOneRoute: React.FC = () => (
   <Container maxWidth="lg" sx={{ py: 6 }}>
@@ -29,19 +27,19 @@ export const StageOneRoute: React.FC = () => (
       </Box>
 
       <Alert severity="success">
-        Loaded entity definition from <strong>src/sources/domain-schema.json</strong>
+        Loaded entity definition from <strong>sources/client_entity_spec.json</strong>
       </Alert>
 
       <Paper variant="outlined" sx={{ p: 3 }}>
         <Stack spacing={2}>
           <Box>
-            <Typography variant="h5">{domainSchemaSource.entityName}</Typography>
+            <Typography variant="h5">{clientSource.title}</Typography>
             <Typography variant="body2" color="text.secondary">
-              {fields.length} defined fields
+              {Object.keys(clientSource.properties).length} defined fields, linked to Address through ClientAddress
             </Typography>
           </Box>
 
-          {fields.map(([key, field]) => (
+          {Object.entries(clientSource.properties).map(([key, field]) => (
             <Box
               key={key}
               sx={{
@@ -70,6 +68,9 @@ export const StageOneRoute: React.FC = () => (
       </Paper>
 
       <Stack direction="row" spacing={2}>
+        <Button variant="contained" href="/client-address">
+          View client address model
+        </Button>
         <Button variant="contained" href="/demo">
           Open full demo
         </Button>
