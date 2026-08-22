@@ -1,0 +1,40 @@
+{
+  "id": "vendor_onboarding_q",
+  "title": "Vendor Onboarding Questionnaire",
+  "version": "1.0.0",
+  "targetEntity": "Vendor",
+  "initialStep": "step_1",
+  "questions": {
+    "q1": {
+      "id": "q1",
+      "entityName": "Vendor",
+      "fieldKey": "company_name",
+      "questionText": "What is the official registered company name?",
+      "isRequired": true
+    },
+    "q2": {
+      "id": "q2",
+      "entityName": "Vendor",
+      "fieldKey": "tax_number",
+      "questionText": "What is the primary corporate tax identification number?",
+      "isRequired": true,
+      "widget": {
+        "type": "text",
+        "props": {}
+      }
+    }
+  },
+  "steps": {
+    "step_1": {
+      "id": "step_1",
+      "title": "Basic Entity Identification",
+      "questionIds": [
+        "q1",
+        "q2"
+      ]
+    }
+  },
+  "transitions": {
+    "step_1": []
+  }
+}

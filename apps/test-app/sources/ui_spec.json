@@ -1,0 +1,38 @@
+{
+  "title": "supplier Layout",
+  "sections": [
+    {
+      "title": "General Details",
+      "fields": [
+        "vendor_id",
+        {
+          "key": "company_name",
+          "label": "Legal Entity Name",
+          "widget": {
+            "type": "text",
+            "props": {}
+          }
+        }
+      ]
+    },
+    {
+      "title": "Compliance Information",
+      "fields": [
+        {
+          "key": "tax_number",
+          "widget": {
+            "type": "text",
+            "props": {}
+          }
+        },
+        {
+          "key": "risk_score",
+          "widget": {
+            "type": "number",
+            "props": {}
+          }
+        }
+      ]
+    }
+  ]
+}

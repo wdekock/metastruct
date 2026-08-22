@@ -4,6 +4,7 @@ import {
   QuestionnaireSpec,
   ValidationContext,
   CoreValidator,
+  Violation,
   LawViolationError,
 } from '@metastruct/core';
 
@@ -104,28 +105,18 @@ function resolveDefaultWidget(type: string): NormalizedWidget {
   };
 }
 
-function findUIField(
-  uiSpec: UISpec | undefined,
-  fieldKey: string
-) {
-  return uiSpec?.sections
+function resolveFieldWidget(
+  entity: EntitySpec,
+  fieldKey: string,
+  uiSpec?: UISpec
+): NormalizedWidget {
+  const uiField = uiSpec?.sections
     .flatMap((section) => section.fields)
     .find((field) =>
       typeof field === 'string'
         ? field === fieldKey
         : field.key === fieldKey
     );
-}
-
-function resolveFieldWidget(
-  entity: EntitySpec,
-  fieldKey: string,
-  uiSpec?: UISpec
-): NormalizedWidget {
-  const uiField = findUIField(
-    uiSpec,
-    fieldKey
-  );
 
   if (
     typeof uiField !== 'string' &&
@@ -147,10 +138,13 @@ function resolveFieldLabel(
   fieldKey: string,
   uiSpec?: UISpec
 ): string {
-  const uiField = findUIField(
-    uiSpec,
-    fieldKey
-  );
+  const uiField = uiSpec?.sections
+    .flatMap((section) => section.fields)
+    .find((field) =>
+      typeof field === 'string'
+        ? field === fieldKey
+        : field.key === fieldKey
+    );
 
   if (
     typeof uiField !== 'string' &&
@@ -163,34 +157,6 @@ function resolveFieldLabel(
     entity.properties[fieldKey].title ??
     fieldKey.charAt(0).toUpperCase() +
       fieldKey.slice(1)
-  );
-}
-
-/*
- * Resolve the effective questionnaire widget.
- *
- * Cascade defined by QUESTIONNAIRE_SPEC_SCHEMA:
- *
- *   1. Question-level widget override
- *   2. UI Spec widget for the mapped entity field
- *   3. Metastruct default widget for the entity field type
- */
-function resolveQuestionWidget(
-  question: QuestionnaireSpec['questions'][string],
-  entity: EntitySpec,
-  uiSpec?: UISpec
-): NormalizedWidget {
-  if (question.widget) {
-    return {
-      type: question.widget.type,
-      props: question.widget.props,
-    };
-  }
-
-  return resolveFieldWidget(
-    entity,
-    question.fieldKey,
-    uiSpec
   );
 }
 
@@ -246,11 +212,7 @@ export class MasterCompiler {
       context.questionnaires ?? {}
     )) {
       questionnaires[questionnaireId] =
-        this.compileQuestionnaire(
-          questionnaire,
-          context.entities,
-          context.uiSpecs
-        );
+        this.compileQuestionnaire(questionnaire);
     }
 
     return {
@@ -382,9 +344,7 @@ export class MasterCompiler {
   }
 
   private compileQuestionnaire(
-    questionnaire: QuestionnaireSpec,
-    entities: Record<string, EntitySpec>,
-    uiSpecs?: Record<string, UISpec>
+    questionnaire: QuestionnaireSpec
   ): CompiledQuestionnaire {
     const questions: Record<
       string,
@@ -397,29 +357,6 @@ export class MasterCompiler {
     ] of Object.entries(
       questionnaire.questions
     )) {
-      const entity =
-        entities[question.entityName];
-
-      /*
-       * Core validation has already established
-       * that entityName and fieldKey resolve.
-       *
-       * Keep this guard here so the compiler fails
-       * clearly if it is ever called outside the
-       * normal validated compilation path.
-       */
-      if (!entity) {
-        throw new Error(
-          `Questionnaire '${questionnaire.id}' question '${key}' references entity '${question.entityName}', which is not available in the compilation context.`
-        );
-      }
-
-      if (!entity.properties[question.fieldKey]) {
-        throw new Error(
-          `Questionnaire '${questionnaire.id}' question '${key}' references field '${question.fieldKey}' on entity '${question.entityName}', which is not available in the compilation context.`
-        );
-      }
-
       questions[key] = {
         id: question.id,
         entityName: question.entityName,
@@ -431,21 +368,10 @@ export class MasterCompiler {
           question.isRequired ?? false,
         readOnly:
           question.readOnly ?? false,
-
-        /*
-         * Questionnaire widget cascade:
-         *
-         * question.widget
-         *     ↓
-         * UI Spec field.widget
-         *     ↓
-         * Metastruct default widget
-         */
-        widget: resolveQuestionWidget(
-          question,
-          entity,
-          uiSpecs?.[question.entityName]
-        ),
+        widget:
+          question.widget ?? {
+            type: 'text',
+          },
       };
     }
 

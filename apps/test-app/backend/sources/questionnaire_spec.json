@@ -1,0 +1,24 @@
+{
+  "$schema": "https://metastruct.dev/schemas/questionnaire_spec.v1.json",
+  "id": "Q-001",
+  "title": "Vendor Onboarding Questionnaire",
+  "targetEntity": "Vendor",
+  "questions": [
+    {
+      "id": "q1",
+      "fieldKey": "company_name",
+      "questionText": "What is the official registered company name?",
+      "widget": {
+        "type": "text"
+      }
+    },
+    {
+      "id": "q2",
+      "fieldKey": "tax_number",
+      "questionText": "What is the primary corporate tax identification number?",
+      "widget": {
+        "type": "text"
+      }
+    }
+  ]
+}

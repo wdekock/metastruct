@@ -1,0 +1,39 @@
+{
+  "$schema": "https://metastruct.dev/schemas/entity_spec.v1.json",
+  "entityName": "Vendor",
+  "title": "Vendor",
+  "description": "Core entity representing a registered corporate vendor.",
+  "primaryKey": "vendor_id",
+  "fields": [
+    {
+      "key": "vendor_id",
+      "label": "Vendor ID",
+      "type": "string",
+      "required": true,
+      "isPrimaryKey": true,
+      "description": "Unique vendor identifier string."
+    },
+    {
+      "key": "company_name",
+      "label": "Company Name",
+      "type": "string",
+      "required": true,
+      "description": "Registered trade or corporate name."
+    },
+    {
+      "key": "tax_number",
+      "label": "Tax Number",
+      "type": "string",
+      "required": true,
+      "description": "Corporate tax identification code."
+    },
+    {
+      "key": "risk_score",
+      "label": "Risk Score",
+      "type": "number",
+      "required": false,
+      "defaultValue": 0,
+      "description": "Calculated risk assessment score."
+    }
+  ]
+}

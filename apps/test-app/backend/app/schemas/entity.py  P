@@ -1,0 +1,20 @@
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel, Field
+
+
+class PropertySpec(BaseModel):
+    type: str
+    title: Optional[str] = None
+    default: Optional[Any] = None
+    minimum: Optional[float] = None
+    maximum: Optional[float] = None
+    isForeignKey: Optional[bool] = False
+    foreignEntity: Optional[str] = None
+
+
+class EntitySpec(BaseModel):
+    title: str
+    version: str = "1.0.0"
+    primaryKey: str = "id"
+    required: List[str] = Field(default_factory=list)
+    properties: Dict[str, PropertySpec] = Field(default_factory=dict)

@@ -1,55 +1,117 @@
-import React from "react";
-import { Paper, Typography, Box, TextField, Button, Stack, Divider, Alert } from "@mui/material";
-import { useManifest } from "../../context/ManifestContext";
+import React, { useState } from "react";
+import {
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Alert,
+} from "@mui/material";
+import StorageIcon from "@mui/icons-material/Storage";
+import { useSystemManifest } from "../../hooks/useSystemManifest";
 
 export const EntityDetailPanel: React.FC = () => {
-  const { selectedNode } = useManifest();
+  const { manifest, records, commitRecord } = useSystemManifest();
+  const [formState, setFormState] = useState<Record<string, string>>({});
 
-  if (!selectedNode) {
-    return (
-      <Paper elevation={2} sx={{ p: 4, height: "100%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 2 }}>
-        <Typography color="text.secondary">Select an entity or field from the tree on the left.</Typography>
-      </Paper>
-    );
-  }
+  const vendorRecords = records?.["Vendor"] || [];
+  const questions = manifest?.questionnaires?.["vendor-onboarding"]?.questions || [
+    { id: "q1", prompt: "What is the official registered company name?", targetField: "company_name" },
+    { id: "q2", prompt: "What is the primary corporate tax identification number?", targetField: "tax_number" },
+  ];
 
-  const { id, data } = selectedNode;
+  const handleFieldChange = (field: string, value: string) => {
+    setFormState((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formState.company_name) return;
+
+    if (commitRecord) {
+      commitRecord("Vendor", formState);
+    }
+    setFormState({});
+  };
 
   return (
-    <Paper elevation={2} sx={{ p: 3, height: "100%", overflowY: "auto", borderRadius: 2 }}>
-      <Typography variant="h6" fontWeight="600" gutterBottom>
-        Field Details: {data.title || id}
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Field Identifier: <code>{id}</code>
-      </Typography>
-      <Divider sx={{ mb: 3 }} />
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      {/* 4. Interactive UI Form Playground */}
+      <Paper variant="outlined" sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          4. Interactive UI Form Playground
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Test dynamic form rendering generated from ui_spec.json and validated against entity_spec.json.
+        </Typography>
 
-      <Stack spacing={2.5} maxWidth={500}>
-        <TextField label="Title" defaultValue={data.title || id} fullWidth size="small" />
-        <TextField label="Data Type" defaultValue={data.type} fullWidth size="small" />
-        {data.expression && (
-          <TextField
-            label="Computed Expression"
-            defaultValue={data.expression}
-            fullWidth
-            size="small"
-            multiline
-            rows={2}
-          />
+        <Box component="form" onSubmit={handleSubmit}>
+          {questions.map((q: any) => (
+            <Box key={q.id} sx={{ mb: 2 }}>
+              <Typography variant="subtitle2">{q.prompt}</Typography>
+              <Typography variant="caption" color="primary" display="block" sx={{ mb: 0.5 }}>
+                Binds to: Vendor.{q.targetField}
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                value={formState[q.targetField] || ""}
+                onChange={(e) => handleFieldChange(q.targetField, e.target.value)}
+              />
+            </Box>
+          ))}
+
+          <Button
+            type="submit"
+            variant="contained"
+            disableElevation
+            startIcon={<StorageIcon />}
+            sx={{ mt: 1 }}
+          >
+            Commit Record to Vendor SSOT
+          </Button>
+        </Box>
+      </Paper>
+
+      {/* 5. Live Database Records */}
+      <Paper variant="outlined" sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          5. Live Database Records (Vendor)
+        </Typography>
+
+        {vendorRecords.length === 0 ? (
+          <Alert severity="info">No database records found for entity: Vendor</Alert>
+        ) : (
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Vendor ID</TableCell>
+                  <TableCell>Company Name</TableCell>
+                  <TableCell>Tax Number</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {vendorRecords.map((row: any, idx: number) => (
+                  <TableRow key={row.vendor_id || idx}>
+                    <TableCell>{row.vendor_id}</TableCell>
+                    <TableCell>{row.company_name}</TableCell>
+                    <TableCell>{row.tax_number}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
-        <Alert severity="info" sx={{ mt: 1 }}>
-          Edits here directly mutate the live manifest context.
-        </Alert>
-        <Stack direction="row" spacing={2} sx={{ pt: 1 }}>
-          <Button variant="contained" color="primary">
-            Save Changes
-          </Button>
-          <Button variant="outlined" color="error">
-            Delete Field
-          </Button>
-        </Stack>
-      </Stack>
-    </Paper>
+      </Paper>
+    </Box>
   );
 };
+
+export default EntityDetailPanel;

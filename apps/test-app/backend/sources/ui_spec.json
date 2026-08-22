@@ -1,0 +1,22 @@
+{
+  "$schema": "https://metastruct.dev/schemas/ui_spec.v1.json",
+  "targetEntity": "Vendor",
+  "layout": [
+    {
+      "title": "General Details",
+      "fields": ["vendor_id", "company_name"]
+    },
+    {
+      "title": "Compliance Information",
+      "fields": ["tax_number", "risk_score"]
+    }
+  ],
+  "defaultWidgets": {
+    "string": {
+      "type": "text"
+    },
+    "number": {
+      "type": "number"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "vendor_id": "VEND-001",
+    "company_name": "Acme Logistics",
+    "tax_number": "TX-990812",
+    "risk_score": 12
+  },
+  {
+    "vendor_id": "VEND-002",
+    "company_name": "Apex Global Supply",
+    "tax_number": "TX-443109",
+    "risk_score": 5
+  }
+]

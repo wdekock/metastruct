@@ -1,0 +1,77 @@
+{
+  "systemId": "sys_vendor",
+  "version": "1.0.0",
+  "compiledAt": "2026-08-22T08:58:25.748925Z",
+  "entities": {
+    "Vendor": {
+      "entityName": "Vendor",
+      "primaryKey": "vendor_id",
+      "schema": {},
+      "layout": [
+        {
+          "title": "General Details",
+          "fields": [
+            "vendor_id",
+            "company_name"
+          ]
+        },
+        {
+          "title": "Compliance Information",
+          "fields": [
+            "tax_number",
+            "risk_score"
+          ]
+        }
+      ]
+    }
+  },
+  "questionnaires": {
+    "vendor_onboarding_q": {
+      "id": "vendor_onboarding_q",
+      "title": "Vendor Onboarding Questionnaire",
+      "targetEntity": "Vendor",
+      "initialStep": "step_1",
+      "questions": {
+        "q1": {
+          "id": "q1",
+          "entityName": "Vendor",
+          "fieldKey": "company_name",
+          "questionText": "What is the official registered company name?",
+          "helpText": null,
+          "isRequired": true,
+          "readOnly": false,
+          "widget": {
+            "type": "text",
+            "props": {}
+          }
+        },
+        "q2": {
+          "id": "q2",
+          "entityName": "Vendor",
+          "fieldKey": "tax_number",
+          "questionText": "What is the primary corporate tax identification number?",
+          "helpText": null,
+          "isRequired": true,
+          "readOnly": false,
+          "widget": {
+            "type": "text",
+            "props": {}
+          }
+        }
+      },
+      "steps": {
+        "step_1": {
+          "id": "step_1",
+          "title": "Basic Entity Identification",
+          "questionIds": [
+            "q1",
+            "q2"
+          ]
+        }
+      },
+      "allowedTransitions": {
+        "step_1": []
+      }
+    }
+  }
+}
