@@ -1,0 +1,28 @@
+{
+  "entityName": "Capital Expenditure Request",
+  "properties": {
+    "projectName": {
+      "type": "string",
+      "title": "Project Name",
+      "required": true
+    },
+    "department": {
+      "type": "string",
+      "title": "Department",
+      "required": true
+    },
+    "unitCost": {
+      "type": "number",
+      "title": "Unit Cost ($)"
+    },
+    "quantity": {
+      "type": "number",
+      "title": "Quantity"
+    },
+    "totalCost": {
+      "type": "number",
+      "title": "Total Cost ($)",
+      "expression": "unitCost * quantity"
+    }
+  }
+}

@@ -6,6 +6,8 @@ import { adaptToSystemManifest } from "@metastruct/compiler";
 import { ExpressionEngine } from "@metastruct/expression-engine";
 import { SchemaFieldCanvas } from "@metastruct/studio-ui";
 import CheckpointRoute from "./routes/CheckpointRoute";
+import domainSchemaSource from "./sources/domain-schema.json";
+import workflowSource from "./sources/workflow.json";
 
 import {
   Box,
@@ -39,37 +41,9 @@ const theme = createTheme({
   },
 });
 
-// --- SOURCE MANIFEST DEFINITIONS ---
-const defaultDomainSchema = {
-  entityName: "Capital Expenditure Request",
-  properties: {
-    projectName: { type: "string", title: "Project Name", required: true },
-    department: { type: "string", title: "Department", required: true },
-    unitCost: { type: "number", title: "Unit Cost ($)" },
-    quantity: { type: "number", title: "Quantity" },
-    totalCost: { type: "number", title: "Total Cost ($)", expression: "unitCost * quantity" },
-  },
-};
-
-const defaultAppTreeWorkflow = {
-  stepper: [
-    { id: "general", title: "1. General Information", fields: ["projectName", "department"] },
-    { id: "budget", title: "2. Financial Breakdown", fields: ["unitCost", "quantity", "totalCost"] },
-    { id: "review", title: "3. Workflow Governance", fields: [] },
-  ],
-  workflow: {
-    initialStep: "draft",
-    transitions: {
-      draft: [{ to: "submitted", label: "Submit Request", color: "primary" }],
-      submitted: [
-        { to: "approved", label: "Approve Request", color: "success" },
-        { to: "rejected", label: "Reject Request", color: "error" },
-      ],
-      approved: [{ to: "draft", label: "Re-open Request", color: "warning" }],
-      rejected: [{ to: "draft", label: "Revise & Resubmit", color: "warning" }],
-    },
-  },
-};
+// Source definitions live in JSON so the app consumes editable specifications.
+const defaultDomainSchema = domainSchemaSource;
+const defaultAppTreeWorkflow = workflowSource;
 
 export function UnifiedMasterDemo() {
   const [activeTab, setActiveTab] = useState(0); // 0: Runtime App, 1: Studio Builder, 2: Source JSONs

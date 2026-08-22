@@ -1,0 +1,57 @@
+{
+  "stepper": [
+    {
+      "id": "general",
+      "title": "1. General Information",
+      "fields": ["projectName", "department"]
+    },
+    {
+      "id": "budget",
+      "title": "2. Financial Breakdown",
+      "fields": ["unitCost", "quantity", "totalCost"]
+    },
+    {
+      "id": "review",
+      "title": "3. Workflow Governance",
+      "fields": []
+    }
+  ],
+  "workflow": {
+    "initialStep": "draft",
+    "transitions": {
+      "draft": [
+        {
+          "to": "submitted",
+          "label": "Submit Request",
+          "color": "primary"
+        }
+      ],
+      "submitted": [
+        {
+          "to": "approved",
+          "label": "Approve Request",
+          "color": "success"
+        },
+        {
+          "to": "rejected",
+          "label": "Reject Request",
+          "color": "error"
+        }
+      ],
+      "approved": [
+        {
+          "to": "draft",
+          "label": "Re-open Request",
+          "color": "warning"
+        }
+      ],
+      "rejected": [
+        {
+          "to": "draft",
+          "label": "Revise & Resubmit",
+          "color": "warning"
+        }
+      ]
+    }
+  }
+}
