@@ -3,11 +3,17 @@
   "title": "Address",
   "version": "1.0.0",
   "primaryKey": "address_id",
-  "required": ["address_id", "line1", "city", "postal_code", "country"],
+  "required": ["address_id", "address_type_id", "line1", "city", "postal_code", "country"],
   "properties": {
     "address_id": {
       "type": "uid",
       "title": "Address ID"
+    },
+    "address_type_id": {
+      "type": "uid",
+      "title": "Address type ID",
+      "isForeignKey": true,
+      "foreignEntity": "AddressType"
     },
     "line1": {
       "type": "string",
@@ -40,8 +46,14 @@
   },
   "relationships": [
     {
-      "name": "clients",
-      "targetEntity": "Client",
+      "name": "addressType",
+      "targetEntity": "AddressType",
+      "type": "manyToOne",
+      "foreignKey": "address_type_id"
+    },
+    {
+      "name": "clientAddresses",
+      "targetEntity": "ClientAddress",
       "type": "oneToMany",
       "foreignKey": "address_id"
     }

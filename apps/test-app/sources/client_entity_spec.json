@@ -3,7 +3,7 @@
   "title": "Client",
   "version": "1.0.0",
   "primaryKey": "client_id",
-  "required": ["client_id", "name", "address_id"],
+  "required": ["client_id", "name"],
   "properties": {
     "client_id": {
       "type": "uid",
@@ -17,20 +17,14 @@
     "email": {
       "type": "string",
       "title": "Email"
-    },
-    "address_id": {
-      "type": "uid",
-      "title": "Address ID",
-      "isForeignKey": true,
-      "foreignEntity": "Address"
     }
   },
   "relationships": [
     {
-      "name": "address",
-      "targetEntity": "Address",
-      "type": "manyToOne",
-      "foreignKey": "address_id"
+      "name": "clientAddresses",
+      "targetEntity": "ClientAddress",
+      "type": "oneToMany",
+      "foreignKey": "client_id"
     }
   ]
 }

@@ -2,6 +2,8 @@ import React from "react";
 import { Alert, Box, Button, Chip, Container, Paper, Stack, Typography } from "@mui/material";
 import client from "../../sources/client_entity_spec.json";
 import address from "../../sources/address_entity_spec.json";
+import clientAddress from "../../sources/client_address_entity_spec.json";
+import addressType from "../../sources/address_type_entity_spec.json";
 
 const clientFields = Object.entries(client.properties);
 const addressFields = Object.entries(address.properties);
@@ -26,6 +28,19 @@ export const ClientAddressRoute: React.FC = () => (
       <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
         <ModelCard title={client.title} primaryKey={client.primaryKey} fields={clientFields} />
         <ModelCard title={address.title} primaryKey={address.primaryKey} fields={addressFields} />
+      </Stack>
+
+      <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+        <ModelCard
+          title={clientAddress.title}
+          primaryKey={clientAddress.primaryKey}
+          fields={Object.entries(clientAddress.properties)}
+        />
+        <ModelCard
+          title={addressType.title}
+          primaryKey={addressType.primaryKey}
+          fields={Object.entries(addressType.properties)}
+        />
       </Stack>
 
       <Paper variant="outlined" sx={{ p: 3 }}>

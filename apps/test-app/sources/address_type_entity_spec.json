@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AddressType",
+  "version": "1.0.0",
+  "primaryKey": "address_type_id",
+  "required": ["address_type_id", "code", "label"],
+  "properties": {
+    "address_type_id": {
+      "type": "uid",
+      "title": "Address type ID"
+    },
+    "code": {
+      "type": "string",
+      "title": "Code",
+      "minLength": 1
+    },
+    "label": {
+      "type": "string",
+      "title": "Label",
+      "minLength": 1
+    }
+  }
+}

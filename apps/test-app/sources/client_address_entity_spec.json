@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ClientAddress",
+  "version": "1.0.0",
+  "primaryKey": "client_address_id",
+  "required": ["client_address_id", "client_id", "address_id"],
+  "properties": {
+    "client_address_id": {
+      "type": "uid",
+      "title": "Client address ID"
+    },
+    "client_id": {
+      "type": "uid",
+      "title": "Client ID",
+      "isForeignKey": true,
+      "foreignEntity": "Client"
+    },
+    "address_id": {
+      "type": "uid",
+      "title": "Address ID",
+      "isForeignKey": true,
+      "foreignEntity": "Address"
+    }
+  },
+  "relationships": [
+    {
+      "name": "client",
+      "targetEntity": "Client",
+      "type": "manyToOne",
+      "foreignKey": "client_id"
+    },
+    {
+      "name": "address",
+      "targetEntity": "Address",
+      "type": "manyToOne",
+      "foreignKey": "address_id"
+    }
+  ]
+}
