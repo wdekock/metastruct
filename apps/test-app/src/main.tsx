@@ -6,6 +6,8 @@ import { adaptToSystemManifest } from "@metastruct/compiler";
 import { ExpressionEngine } from "@metastruct/expression-engine";
 import { SchemaFieldCanvas } from "@metastruct/studio-ui";
 import CheckpointRoute from "./routes/CheckpointRoute";
+import StageOneRoute from "./routes/StageOneRoute";
+import ClientAddressRoute from "./routes/ClientAddressRoute";
 import domainSchemaSource from "./sources/domain-schema.json";
 import workflowSource from "./sources/workflow.json";
 
@@ -374,10 +376,14 @@ export function UnifiedMasterDemo() {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {window.location.pathname === "/checkpoint" ? (
+    {window.location.pathname === "/client-address" ? (
+      <ClientAddressRoute />
+    ) : window.location.pathname === "/checkpoint" ? (
       <CheckpointRoute />
-    ) : (
+    ) : window.location.pathname === "/demo" ? (
       <UnifiedMasterDemo />
+    ) : (
+      <StageOneRoute />
     )}
   </React.StrictMode>
 );
