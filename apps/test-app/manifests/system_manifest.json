@@ -1,77 +1,329 @@
 {
-  "systemId": "sys_vendor",
+  "systemId": "client-address-system",
   "version": "1.0.0",
-  "compiledAt": "2026-08-22T08:58:25.748925Z",
+  "compiledAt": "2026-08-23T00:38:59.213Z",
   "entities": {
-    "Vendor": {
-      "entityName": "Vendor",
-      "primaryKey": "vendor_id",
-      "schema": {},
+    "Client": {
+      "entityName": "Client",
+      "primaryKey": "client_id",
+      "schema": {
+        "client_id": {
+          "key": "client_id",
+          "type": "uid",
+          "label": "Client ID",
+          "required": true,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
+        },
+        "name": {
+          "key": "name",
+          "type": "string",
+          "label": "Client name",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {
+            "minLength": 1
+          }
+        },
+        "email": {
+          "key": "email",
+          "type": "string",
+          "label": "Email",
+          "required": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
+        }
+      },
       "layout": [
         {
           "title": "General Details",
           "fields": [
-            "vendor_id",
-            "company_name"
+            "client_id",
+            "name",
+            "email"
           ]
+        }
+      ]
+    },
+    "Address": {
+      "entityName": "Address",
+      "primaryKey": "address_id",
+      "schema": {
+        "address_id": {
+          "key": "address_id",
+          "type": "uid",
+          "label": "Address ID",
+          "required": true,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
         },
+        "address_type_id": {
+          "key": "address_type_id",
+          "type": "uid",
+          "label": "Address type ID",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "foreignEntity": "AddressType",
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
+        },
+        "line1": {
+          "key": "line1",
+          "type": "string",
+          "label": "Address line 1",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {
+            "minLength": 1
+          }
+        },
+        "line2": {
+          "key": "line2",
+          "type": "string",
+          "label": "Address line 2",
+          "required": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
+        },
+        "city": {
+          "key": "city",
+          "type": "string",
+          "label": "City",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {
+            "minLength": 1
+          }
+        },
+        "state": {
+          "key": "state",
+          "type": "string",
+          "label": "State or province",
+          "required": false,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
+        },
+        "postal_code": {
+          "key": "postal_code",
+          "type": "string",
+          "label": "Postal code",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {
+            "minLength": 1
+          }
+        },
+        "country": {
+          "key": "country",
+          "type": "string",
+          "label": "Country",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {
+            "minLength": 2
+          }
+        }
+      },
+      "layout": [
         {
-          "title": "Compliance Information",
+          "title": "General Details",
           "fields": [
-            "tax_number",
-            "risk_score"
+            "address_id",
+            "address_type_id",
+            "line1",
+            "line2",
+            "city",
+            "state",
+            "postal_code",
+            "country"
+          ]
+        }
+      ]
+    },
+    "ClientAddress": {
+      "entityName": "ClientAddress",
+      "primaryKey": "client_address_id",
+      "schema": {
+        "client_address_id": {
+          "key": "client_address_id",
+          "type": "uid",
+          "label": "Client address ID",
+          "required": true,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
+        },
+        "client_id": {
+          "key": "client_id",
+          "type": "uid",
+          "label": "Client ID",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "foreignEntity": "Client",
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
+        },
+        "address_id": {
+          "key": "address_id",
+          "type": "uid",
+          "label": "Address ID",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": true,
+          "foreignEntity": "Address",
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
+        }
+      },
+      "layout": [
+        {
+          "title": "General Details",
+          "fields": [
+            "client_address_id",
+            "client_id",
+            "address_id"
+          ]
+        }
+      ]
+    },
+    "AddressType": {
+      "entityName": "AddressType",
+      "primaryKey": "address_type_id",
+      "schema": {
+        "address_type_id": {
+          "key": "address_type_id",
+          "type": "uid",
+          "label": "Address type ID",
+          "required": true,
+          "isPrimaryKey": true,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {}
+        },
+        "code": {
+          "key": "code",
+          "type": "string",
+          "label": "Code",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {
+            "minLength": 1
+          }
+        },
+        "label": {
+          "key": "label",
+          "type": "string",
+          "label": "Label",
+          "required": true,
+          "isPrimaryKey": false,
+          "isForeignKey": false,
+          "foreignEntity": null,
+          "defaultValue": null,
+          "widget": {
+            "type": "text"
+          },
+          "validationRules": {
+            "minLength": 1
+          }
+        }
+      },
+      "layout": [
+        {
+          "title": "General Details",
+          "fields": [
+            "address_type_id",
+            "code",
+            "label"
           ]
         }
       ]
     }
   },
-  "questionnaires": {
-    "vendor_onboarding_q": {
-      "id": "vendor_onboarding_q",
-      "title": "Vendor Onboarding Questionnaire",
-      "targetEntity": "Vendor",
-      "initialStep": "step_1",
-      "questions": {
-        "q1": {
-          "id": "q1",
-          "entityName": "Vendor",
-          "fieldKey": "company_name",
-          "questionText": "What is the official registered company name?",
-          "helpText": null,
-          "isRequired": true,
-          "readOnly": false,
-          "widget": {
-            "type": "text",
-            "props": {}
-          }
-        },
-        "q2": {
-          "id": "q2",
-          "entityName": "Vendor",
-          "fieldKey": "tax_number",
-          "questionText": "What is the primary corporate tax identification number?",
-          "helpText": null,
-          "isRequired": true,
-          "readOnly": false,
-          "widget": {
-            "type": "text",
-            "props": {}
-          }
-        }
-      },
-      "steps": {
-        "step_1": {
-          "id": "step_1",
-          "title": "Basic Entity Identification",
-          "questionIds": [
-            "q1",
-            "q2"
-          ]
-        }
-      },
-      "allowedTransitions": {
-        "step_1": []
-      }
-    }
-  }
+  "questionnaires": {}
 }

@@ -8,15 +8,27 @@ from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import create_async_engine
 
+from app.config import DATABASE_URL, MANIFEST_PATH
 from app.db.generic_repository import GenericSchemaRepository
 
 app = FastAPI(title="Metastruct Dynamic Runtime Engine", version="1.0.0")
 
-MANIFEST_PATH = Path(os.getenv("METASTRUCT_MANIFEST_PATH", "manifest.json"))
-DATABASE_URL = os.getenv("METASTRUCT_DATABASE_URL", "sqlite+aiosqlite:///./metastruct.db")
-engine = create_async_engine(DATABASE_URL)
+manifest_path = Path(os.getenv("METASTRUCT_MANIFEST_PATH", str(MANIFEST_PATH)))
+engine = create_async_engine(os.getenv("METASTRUCT_DATABASE_URL", DATABASE_URL))
 repository = GenericSchemaRepository(engine)
 manifest: Dict[str, Any] = {}
+
+
+def load_manifest() -> Dict[str, Any]:
+    global manifest
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text())
+    else:
+        manifest = {}
+    return manifest
+
+
+load_manifest()
 
 class ManifestPayload(BaseModel):
     manifest: Dict[str, Any]
@@ -33,10 +45,8 @@ async def health_check():
 
 
 @app.on_event("startup")
-async def load_manifest():
-    global manifest
-    if MANIFEST_PATH.exists():
-        manifest = json.loads(MANIFEST_PATH.read_text())
+async def startup_manifest_load():
+    load_manifest()
 
 @app.post("/api/v1/entity/validate")
 async def validate_entity(payload: ManifestPayload):
@@ -46,10 +56,10 @@ async def validate_entity(payload: ManifestPayload):
         if field.get("required")
     ]
     missing = [field for field in required_fields if field not in payload.data]
-    
+
     if missing:
         raise HTTPException(status_code=422, detail=f"Validation failed. Missing required fields: {missing}")
-        
+
     return {"valid": True, "message": "Payload conforms to entity schema."}
 
 
